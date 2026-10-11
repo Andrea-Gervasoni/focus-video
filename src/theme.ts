@@ -1,8 +1,27 @@
-import {loadFont as loadHead} from '@remotion/google-fonts/BricolageGrotesque';
-import {loadFont as loadMono} from '@remotion/google-fonts/JetBrainsMono';
+import {cancelRender, continueRender, delayRender, staticFile} from 'remotion';
 
-export const HEAD = loadHead('normal', {weights: ['700', '800'], subsets: ['latin', 'latin-ext']}).fontFamily;
-export const MONO = loadMono('normal', {weights: ['700', '800'], subsets: ['latin']}).fontFamily;
+// Fonts are self-hosted in public/fonts (SIL Open Font License), so renders never
+// depend on fonts.googleapis.com and work offline or behind a proxy.
+const FACES: [family: string, weight: string, file: string][] = [
+  ['Bricolage Grotesque', '700', 'fonts/BricolageGrotesque-700.ttf'],
+  ['Bricolage Grotesque', '800', 'fonts/BricolageGrotesque-800.ttf'],
+  ['JetBrains Mono', '700', 'fonts/JetBrainsMono-700.ttf'],
+  ['JetBrains Mono', '800', 'fonts/JetBrainsMono-800.ttf'],
+];
+
+if (typeof document !== 'undefined') {
+  const handle = delayRender('Loading fonts');
+  Promise.all(
+    FACES.map(([family, weight, file]) =>
+      new FontFace(family, `url('${staticFile(file)}') format('truetype')`, {weight, style: 'normal'}).load().then((face) => document.fonts.add(face)),
+    ),
+  )
+    .then(() => continueRender(handle))
+    .catch((err) => cancelRender(err));
+}
+
+export const HEAD = "'Bricolage Grotesque', sans-serif";
+export const MONO = "'JetBrains Mono', monospace";
 
 export const C = {
   cream: '#F3EEDF',

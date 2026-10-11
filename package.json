@@ -14,7 +14,6 @@
   "dependencies": {
     "@remotion/bundler": "^4.0.534",
     "@remotion/cli": "^4.0.534",
-    "@remotion/google-fonts": "^4.0.534",
     "@remotion/motion-blur": "^4.0.534",
     "@remotion/noise": "^4.0.534",
     "@remotion/paths": "^4.0.534",
