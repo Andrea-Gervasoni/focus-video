@@ -1,0 +1,9 @@
+[
+  {"id": "hook", "start": 0, "end": 14},
+  {"id": "who", "start": 14, "end": 35},
+  {"id": "problem", "start": 35, "end": 57},
+  {"id": "sim", "start": 57, "end": 82},
+  {"id": "crypto", "start": 82, "end": 92},
+  {"id": "fix", "start": 92, "end": 108},
+  {"id": "close", "start": 108, "end": 124.5}
+]
