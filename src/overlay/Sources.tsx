@@ -227,19 +227,22 @@ export const ReferencesSlate: React.FC<{tall?: boolean}> = ({tall = false}) => {
 
 /** 1080x1920 version: one column, bigger type */
 const ReferencesTall: React.FC<{f: number}> = ({f}) => (
-  <AbsoluteFill style={{background: C.cream, backgroundImage: `radial-gradient(${C.creamDark} 2.6px, transparent 2.9px)`, backgroundSize: '46px 46px', backgroundPosition: `${f * 0.4}px ${f * 0.25}px`}}>
-    <Pop at={2} x={540} y={150} from="up" f={f} dist={300}>
-      <Pill bg={C.ink} color={C.white} size={52}>
-        SOURCES
-      </Pill>
-    </Pop>
-    <Pop at={5} x={540} y={250} f={f}>
-      <div style={{fontFamily: SCRIPT, fontStyle: 'italic', fontWeight: 700, fontSize: 52, color: C.ink, textAlign: 'center', width: 960, lineHeight: 1.05}}>
-        Every number on screen comes from the article and <i>the work it cites.</i>
+  <AbsoluteFill style={{background: C.cream}}>
+    <AbsoluteFill style={{backgroundImage: `repeating-linear-gradient(90deg, ${C.creamDark} 0px, ${C.creamDark} 1.6px, transparent 1.6px, transparent 34px)`, backgroundPosition: `${f * 0.3}px 0px`, opacity: 0.55}} />
+    <div style={{position: 'absolute', left: 50, top: 70, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: 980}}>
+      <div style={{transform: `scale(${2 - sp(f, 2, {damping: 12, stiffness: 230, mass: 0.7})})`, transformOrigin: '0% 80%', opacity: f >= 2 ? 1 : 0}}>
+        <Display size={140} color={C.blue}>
+          Sources
+        </Display>
       </div>
-    </Pop>
+      <Rise at={6} f={f} style={{marginTop: 12}}>
+        <Script size={44} style={{whiteSpace: 'normal', lineHeight: 1.1}}>
+          Every number on screen comes from the article and the work it cites.
+        </Script>
+      </Rise>
+    </div>
     {REFERENCES.map((r, i) => (
-      <Pop key={r.id} at={8 + i * 2.5} x={540} y={420 + i * 184} from={i % 2 ? 'right' : 'left'} f={f} dist={240}>
+      <Pop key={r.id} at={8 + i * 2.5} x={540} y={462 + i * 180} from={i % 2 ? 'right' : 'left'} f={f} dist={240}>
         <RefCard r={r} w={980} />
       </Pop>
     ))}

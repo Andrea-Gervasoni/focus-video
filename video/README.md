@@ -1,7 +1,7 @@
 # Render finali
 
 - `focus-video.mp4` — 1920×1080, 30 fps, 2:11, H.264 CRF 22 (copia compressa del render `npm run render`).
-- `focus-video-vertical.mp4` — 1080×1920 per Instagram (`npm run render:vertical`), quando presente.
+- `focus-video-vertical.mp4` — 1080×1920 per Instagram, 2:11, stessa compressione (`npm run render:vertical`).
 
 Anteprima muta: le didascalie seguono i tempi stimati. Dopo aver registrato `public/voiceover.m4a`:
 `npm run retime`, `npm run render`, poi sostituire questi file con le nuove copie compresse

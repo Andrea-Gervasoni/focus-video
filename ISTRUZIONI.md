@@ -28,7 +28,7 @@ Fatto (sessione cloud dell'11 ottobre 2026):
   sottili al posto dei contorni spessi, Lucky più elegante; nuova apertura a copertina di rivista; tolti ticker con
   numeri finti e decorazioni superflue;
 - fonti sullo schermo per ogni affermazione e slate finale `SOURCES`; capitoli con numeri romani in alto e sulla mappa;
-- didascalie senza parole orfane; render finale in `out/focus-video.mp4` (copia compressa in `video/`).
+- didascalie senza parole orfane; render finali orizzontale e verticale, con copie compresse in `video/`.
 
 Resta da fare solo la voce (sezione 4). Dopo `npm run retime` conviene rifare un controllo:
 `npm run render` e `./scripts/qa-sheets.sh` (4 fotogrammi al secondo in `out/qa/`). Mai inventare numeri: ogni cifra
