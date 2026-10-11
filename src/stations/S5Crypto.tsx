@@ -4,7 +4,7 @@ import React from 'react';
 import {AbsoluteFill, random} from 'remotion';
 import {clamp01, easeOut, ramp, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Annotate, At, DefCard, Head, Kinetic, Num, Pill, Pop, SourceTag, stickerCut} from '../components/ui';
+import {Annotate, At, DefCard, Head, Kinetic, Num, Pill, Pop, stickerCut} from '../components/ui';
 import {C, MONO} from '../theme';
 import {useScene} from '../timing';
 
@@ -113,9 +113,6 @@ export const S5Crypto: React.FC = () => {
         </Pill>
       </Pop>
       <DefCard at={tokens} x={1390} y={705} term="Token" def="a crypto coin" rot={2} f={f} />
-      <SourceTag at={d14 + 10} x={1380} y={800} f={f}>
-        CoinGecko via The Defiant, 2024
-      </SourceTag>
     </AbsoluteFill>
   );
 };

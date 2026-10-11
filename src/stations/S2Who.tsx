@@ -3,7 +3,7 @@ import React from 'react';
 import {AbsoluteFill, random} from 'remotion';
 import {clamp01, easeOut, lerp, ramp, sp, wobble} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Annotate, At, Card, Coin, Head, Kinetic, Num, Pill, Pop, SourceTag, Sticker, stickerCut} from '../components/ui';
+import {Annotate, At, Card, Coin, Head, Kinetic, Num, Pill, Pop, Sticker, stickerCut} from '../components/ui';
 import {feeCoinTracks, sample} from '../sim/physics';
 import {C, HEAD, MONO} from '../theme';
 import {useScene} from '../timing';
@@ -147,7 +147,7 @@ export const S2Who: React.FC = () => {
 
       {/* name card */}
       <At x={960} y={lerp(400, 205, nameUp)} transform={`scale(${lerp(1, 0.7, nameUp)})`}>
-        <Pop at={name - 12} x={0} y={0} f={f} from="scale">
+        <Pop at={name - 7} x={0} y={0} f={f} from="scale">
           <Card style={{padding: '26px 56px 30px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14}}>
             <Kinetic text="Andrea Gervasoni" at={name} size={104} f={f} />
             <Pill bg={C.blue} color={C.white} size={38} style={{transform: `scale(${sp(f, tks - 6)})`}}>
@@ -232,15 +232,25 @@ export const S2WhoB: React.FC = () => {
   return (
     <AbsoluteFill>
       {/* the study itself, before its numbers */}
-      <Pop at={data + 4} x={960} y={420} rot={-2} f={f} out={households - 10} outTo="up">
-        <Card style={{width: 1000, padding: '34px 46px', display: 'flex', flexDirection: 'column', gap: 14}}>
-          <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 24, color: C.grey}}>Journal of Finance · 2000</div>
-          <Head size={66} style={{whiteSpace: 'normal'}}>Trading Is Hazardous to Your Wealth</Head>
-          <div style={{fontFamily: HEAD, fontWeight: 700, fontSize: 32}}>Brad Barber &amp; Terrance Odean</div>
-          {[0, 1, 2].map((l) => (
-            <div key={l} style={{height: 12, width: `${92 - l * 14}%`, background: C.greyLight, borderRadius: 6}} />
+      <Pop at={data + 4} x={960} y={455} rot={-2} f={f} out={households - 10} outTo="up">
+        <div style={{position: 'relative'}}>
+          {[2, 1].map((k) => (
+            <div key={k} style={{position: 'absolute', inset: 0, transform: `translate(${k * 16}px, ${k * 14}px) rotate(${k * 1.6}deg)`, background: C.paper, border: `5px solid ${C.ink}`, borderRadius: 30}} />
           ))}
-        </Card>
+          <Card style={{width: 1280, padding: '40px 60px 46px', display: 'flex', flexDirection: 'column', gap: 16, position: 'relative'}}>
+            <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
+              <Pill bg={C.ink} color={C.white} size={26} mono>
+                JOURNAL OF FINANCE · 2000
+              </Pill>
+              <span style={{fontFamily: MONO, fontWeight: 700, fontSize: 24, color: '#6E6757'}}>peer-reviewed study</span>
+            </div>
+            <Head size={88} style={{whiteSpace: 'normal'}}>Trading Is Hazardous to Your Wealth</Head>
+            <div style={{fontFamily: HEAD, fontWeight: 700, fontSize: 38}}>Brad Barber &amp; Terrance Odean</div>
+            {[0, 1, 2].map((l) => (
+              <div key={l} style={{height: 14, width: `${92 - l * 14}%`, background: C.greyLight, borderRadius: 7}} />
+            ))}
+          </Card>
+        </div>
       </Pop>
       <Pop at={households + 12} x={1370} y={790} rot={-2} f={f}>
         <Pill bg={C.gold} size={28}>
@@ -346,9 +356,6 @@ export const S2WhoB: React.FC = () => {
       </Sticker>
       <Annotate at={stop + 8} d="M840 700 Q780 720 700 700" color={C.ink} width={7} head w={10} h={10} f={f} />
       <Annotate at={finalAt + 4} d="M1330 650 Q1460 664 1590 646" color={C.blue} width={9} w={10} h={10} f={f} />
-      <SourceTag at={race + 10} x={420} y={790} f={f}>
-        Barber &amp; Odean, 2000
-      </SourceTag>
       <Pop at={race - 6} x={1770} y={720} from="right" f={f}>
         <div style={stickerCut(5)}>
           <Lucky size={200} expr={f >= finalAt ? 'proud' : 'confident'} sunglasses={1} arms={f >= finalAt ? 'up' : 'down'} jolts={[finalAt]} f={f} look={[-1, -0.2]} seed={3} />

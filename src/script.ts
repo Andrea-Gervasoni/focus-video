@@ -130,6 +130,7 @@ export const DATA: ScriptData = {
         {"word":"zero skill.","event":"zeroSkill"},
         {"word":"sharpe ratio:","event":"sharpe"},
         {"word":"returns divided","event":"divided"},
+        {"word":"by risk.","event":"risk"},
         {"word":"above 2","event":"above2"},
         {"word":"best of ten","event":"b10"},
         {"word":"a hundred,","event":"b100"},
@@ -202,5 +203,10 @@ export const DATA: ScriptData = {
 
 export const FPS = 30;
 export const SCENES = DATA.scenes;
-export const TOTAL_SECONDS = SCENES[SCENES.length - 1].end;
+/** end of the last scene (voice + end card) */
+export const STORY_SECONDS = SCENES[SCENES.length - 1].end;
+/** the reference slate that closes the video, after the story */
+export const OUTRO_SECONDS = 7;
+export const TOTAL_SECONDS = STORY_SECONDS + OUTRO_SECONDS;
+export const STORY_FRAMES = Math.ceil(STORY_SECONDS * FPS);
 export const TOTAL_FRAMES = Math.ceil(TOTAL_SECONDS * FPS);

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Html5Audio, Sequence, staticFile} from 'remotion';
 import {cameraKeys} from '../camera';
-import {DATA, FPS, SCENES, TOTAL_FRAMES} from '../script';
+import {DATA, FPS, SCENES, STORY_FRAMES, TOTAL_FRAMES} from '../script';
 import {cueAbs, sceneFrames, sceneWords} from '../timing';
 
 // All sound lives here (outside the motion-blurred, culled picture tree).
@@ -136,6 +136,10 @@ const sfxEvents = (): Ev[] => {
   add(c('close', 'flip') + 16, 'sparkle', 0.8);
   add(c('close', 'end') - 14, 'whoosh', 1);
   add(c('close', 'below'), 'pop', 0.8);
+  // the reference page slides in
+  add(STORY_FRAMES - 16, 'slide', 0.9);
+  add(STORY_FRAMES - 4, 'rustle', 0.8);
+  for (let i = 0; i < 8; i += 2) add(STORY_FRAMES - 16 + 8 + i * 2.5, 'pop', 0.35);
 
   // camera whip pans
   const k = cameraKeys();
@@ -177,7 +181,8 @@ export const Soundtrack: React.FC = () => {
   const start = beatStart();
   const mw = mutes();
   const env = voiceActivity();
-  const endFade = Math.round(SCENES[SCENES.length - 1].end * FPS) - 30;
+  // the bed keeps playing under the reference slate and fades out with the video
+  const endFade = TOTAL_FRAMES - 52;
   return (
     <>
       {DATA.voiceover &&

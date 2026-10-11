@@ -3,8 +3,10 @@ import {noise2D} from '@remotion/noise';
 import React from 'react';
 import {AbsoluteFill, random, staticFile, useCurrentFrame} from 'remotion';
 import {Cam, camera, cameraSpeed, STATIONS, StationId, viewRect, worldTransform} from '../camera';
-import {C, MONO} from '../theme';
-import {impactPulse} from '../timing';
+import {clamp01, sp} from '../anim';
+import {SceneId, SCENES, STORY_FRAMES} from '../script';
+import {C, HEAD, MONO} from '../theme';
+import {impactPulse, sceneFrames} from '../timing';
 import {Doodles} from './Doodles';
 import {S1Hook} from '../stations/S1Hook';
 import {S2Who, S2WhoB} from '../stations/S2Who';
@@ -121,6 +123,54 @@ const NearLayer: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
   );
 };
 
+// ---------- map labels: when the camera pulls back on the whole notebook, every station shows its chapter ----------
+
+const LABELLED: [StationId, SceneId][] = [
+  ['hook', 'hook'],
+  ['who', 'who'],
+  ['problem', 'problem'],
+  ['sim', 'sim'],
+  ['crypto', 'crypto'],
+  ['fix', 'fix'],
+  ['close', 'close'],
+];
+
+const StationLabels: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
+  const vis = clamp01((0.5 - cam.z) / 0.15);
+  if (vis <= 0) return null;
+  return (
+    <>
+      {LABELLED.map(([st, scene], i) => {
+        const p = sp(f, Math.floor(f - (vis * 30 - i * 3)), {damping: 12, stiffness: 200});
+        return (
+          <div
+            key={st}
+            style={{
+              position: 'absolute',
+              left: STATIONS[st].x + 960,
+              top: STATIONS[st].y + 540,
+              transform: `translate(-50%, -50%) scale(${(0.6 + 0.4 * p) * (0.9 + 0.1 * vis)})`,
+              opacity: vis,
+              display: 'flex',
+              alignItems: 'stretch',
+              border: `16px solid ${C.ink}`,
+              borderRadius: 60,
+              overflow: 'hidden',
+              boxShadow: `22px 22px 0 ${C.ink}`,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <div style={{background: scene === 'close' ? C.orange : C.blue, color: C.white, fontFamily: MONO, fontWeight: 800, fontSize: 150, padding: '20px 50px', display: 'flex', alignItems: 'center'}}>
+              {String(i + 1).padStart(2, '0')}
+            </div>
+            <div style={{background: C.paper, color: C.ink, fontFamily: HEAD, fontWeight: 800, fontSize: 150, padding: '20px 60px', letterSpacing: '-0.02em'}}>{CHAPTERS[scene]}</div>
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
 // ---------- the world ----------
 
 const ChromaDefs: React.FC<{d: number}> = ({d}) => (
@@ -155,6 +205,7 @@ const WorldView: React.FC<{forceAll?: boolean}> = ({forceAll}) => {
             </div>
           ) : null,
         )}
+        <StationLabels cam={cam} f={f} />
       </div>
       <NearLayer cam={cam} f={f} />
     </AbsoluteFill>
@@ -177,12 +228,63 @@ export const World: React.FC = () => {
 
 const TICKS = new Array(40).fill(0).map((_, i) => ({up: random(`tu${i}`) > 0.45, v: (random(`tv${i}`) * 4).toFixed(2), w: random(`tw${i}`)}));
 
+// ---------- chapter bug: where we are in the story, pinned to the left of the ticker ----------
+const CHAPTERS: Record<SceneId, string> = {
+  hook: 'The question',
+  who: 'Why I believed it',
+  problem: 'The trap',
+  sim: 'The experiment',
+  crypto: 'Even worse in crypto',
+  fix: 'The fix',
+  close: 'What comes next',
+};
+
+const ChapterBug: React.FC<{f: number}> = ({f}) => {
+  // switch chapter a little before the scene starts, while the camera whips there
+  let idx = 0;
+  SCENES.forEach((s, i) => {
+    if (i > 0 && f >= sceneFrames(s).from - 6) idx = i;
+  });
+  const changeAt = idx === 0 ? 0 : sceneFrames(SCENES[idx]).from - 6;
+  const p = sp(f, changeAt, {damping: 14, stiffness: 220});
+  const progress = clamp01(f / STORY_FRAMES);
+  const prevTitle = idx > 0 ? CHAPTERS[SCENES[idx - 1].id] : '';
+  return (
+    <>
+      <div style={{position: 'absolute', left: 0, top: 0, height: 44, display: 'flex', alignItems: 'stretch', zIndex: 2, boxShadow: `14px 0 18px ${C.ink}`}}>
+        <div style={{background: C.blue, color: C.white, fontFamily: MONO, fontWeight: 800, fontSize: 20, display: 'flex', alignItems: 'center', padding: '0 16px', letterSpacing: '0.04em'}}>
+          {String(idx + 1).padStart(2, '0')}
+          <span style={{opacity: 0.55}}>/{String(SCENES.length).padStart(2, '0')}</span>
+        </div>
+        <div style={{position: 'relative', width: 330, background: C.ink, overflow: 'hidden', borderRight: `3px solid ${C.blue}`}}>
+          {[
+            {t: prevTitle, y: -p * 44},
+            {t: CHAPTERS[SCENES[idx].id], y: (1 - p) * 44},
+          ].map((it, i) =>
+            it.t ? (
+              <div key={i} style={{position: 'absolute', left: 16, top: it.y, height: 44, display: 'flex', alignItems: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 24, color: C.paper, whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.02em'}}>
+                {it.t}
+              </div>
+            ) : null,
+          )}
+        </div>
+      </div>
+      {/* story progress along the bottom edge of the band */}
+      <div style={{position: 'absolute', left: 0, bottom: 0, height: 4, width: 1920 * progress, background: C.gold, zIndex: 3}} />
+      {SCENES.slice(1).map((s) => (
+        <div key={s.id} style={{position: 'absolute', left: (1920 * sceneFrames(s).from) / STORY_FRAMES - 2, bottom: 0, width: 4, height: 8, background: C.paper, zIndex: 3}} />
+      ))}
+    </>
+  );
+};
+
 export const Ticker: React.FC<{opacity?: number}> = ({opacity = 1}) => {
   const f = useCurrentFrame();
   const x = -((f * 2.2) % 2400);
   if (opacity <= 0.01) return null;
   return (
     <div style={{position: 'absolute', left: 0, right: 0, top: 0, height: 44, background: C.ink, overflow: 'hidden', opacity, zIndex: 90}}>
+      <ChapterBug f={f} />
       <div style={{position: 'absolute', left: x, top: 0, height: 44, display: 'flex', alignItems: 'center', gap: 34, whiteSpace: 'nowrap'}}>
         {[...TICKS, ...TICKS].map((t, i) => (
           <div key={i} style={{display: 'flex', alignItems: 'center', gap: 10, fontFamily: MONO, fontWeight: 700, fontSize: 21, color: t.up ? '#8FA0FF' : '#FF9466'}}>

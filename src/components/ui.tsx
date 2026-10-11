@@ -256,33 +256,6 @@ export const Stamp: React.FC<{
   );
 };
 
-export const SourceTag: React.FC<{at: number; x: number; y: number; children: React.ReactNode; out?: number; f?: number}> = ({
-  at,
-  x,
-  y,
-  children,
-  out,
-  f,
-}) => (
-  <Pop at={at} x={x} y={y} out={out} f={f}>
-    <div
-      style={{
-        fontFamily: MONO,
-        fontWeight: 700,
-        fontSize: 24,
-        color: C.ink,
-        background: C.creamDark,
-        border: `3px solid ${C.ink}`,
-        borderRadius: 999,
-        padding: '6px 18px',
-        whiteSpace: 'nowrap',
-      }}
-    >
-      Source: {children}
-    </div>
-  </Pop>
-);
-
 /** "Term = definition" card, slapped on the first time a term is spoken */
 export const DefCard: React.FC<{
   at: number;
@@ -316,6 +289,16 @@ export const DefCard: React.FC<{
       </div>
     </div>
   </Pop>
+);
+
+/** a real radical sign: the hook is drawn and the bar runs over the radicand (mono fonts draw √ like a v) */
+export const Sqrt: React.FC<{children: React.ReactNode}> = ({children}) => (
+  <span style={{display: 'inline-flex', alignItems: 'stretch', whiteSpace: 'nowrap', verticalAlign: 'bottom', lineHeight: 1.15}}>
+    <svg viewBox="0 0 60 100" preserveAspectRatio="none" style={{width: '0.6em', alignSelf: 'stretch', overflow: 'visible', flex: '0 0 auto'}}>
+      <path d="M3 60 L15 53 L31 92 L55 4.25 L61 4.25" stroke="currentColor" strokeWidth={8.5} fill="none" strokeLinejoin="miter" strokeLinecap="butt" />
+    </svg>
+    <span style={{borderTop: '0.085em solid currentColor', paddingLeft: '0.06em', paddingRight: '0.04em'}}>{children}</span>
+  </span>
 );
 
 // ---------- kinetic type ----------

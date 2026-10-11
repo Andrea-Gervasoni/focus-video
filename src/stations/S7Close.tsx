@@ -64,11 +64,14 @@ export const S7Close: React.FC = () => {
   const cx = lerp(FLIP_COIN.hand.x, FLIP_COIN.apex.x, rise);
   const spin = tt < 0 ? 0 : tt < T_APEX ? tt * 40 : T_APEX * 40 + (tt - T_APEX) * 1.6;
   const frozen = tt >= T_APEX;
+  // rack focus: once the coin hangs in the air, the board and the cards go soft
+  const dof = ramp(f, flip + 8, flip + 30);
+  const soft: React.CSSProperties = dof > 0.01 ? {filter: `blur(${dof * 7}px)`, opacity: 1 - dof * 0.35} : {};
 
   return (
     <AbsoluteFill>
       {/* cork board */}
-      <div style={{position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, transform: `translateX(${-shift * 120}px) scale(${1 - shift * 0.12})`, transformOrigin: '0% 50%'}}>
+      <div style={{position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, transform: `translateX(${-shift * 120}px) scale(${1 - shift * 0.12})`, transformOrigin: '0% 50%', ...soft}}>
         <Pop at={board - 6} x={760} y={470} f={f}>
           <div
             style={{
@@ -143,7 +146,7 @@ export const S7Close: React.FC = () => {
         </div>
       </Pop>
       {/* the open question */}
-      <Pop at={question} x={1440} y={lerp(260, 420, lower)} f={f} rot={-2}>
+      <Pop at={question} x={1440} y={lerp(260, 420, lower)} f={f} rot={-2} out={flip + 10}>
         <Card style={{width: 700, padding: '24px 34px', opacity: 1 - lower * 0.85}}>
           <Head size={56} style={{whiteSpace: 'normal', lineHeight: 1.05}}>
             Can a student with a laptop compete with the <span style={{color: C.orange}}>big funds?</span>
@@ -151,7 +154,7 @@ export const S7Close: React.FC = () => {
         </Card>
       </Pop>
       <Pop at={board + 4} x={1600} y={720} from="right" f={f}>
-        <div style={stickerCut(5)}>
+        <div style={{...stickerCut(5), ...(dof > 0.01 ? {filter: `${stickerCut(5).filter} blur(${dof * 5}px)`} : {})}}>
           <Lucky
             size={290}
             expr={f >= flip ? 'happy' : f >= shrug ? 'shrug' : 'detective'}

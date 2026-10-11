@@ -166,16 +166,34 @@ const Nested: React.FC<{f: number; cue: (e: string) => number}> = ({f, cue}) => 
           );
         })}
       </svg>
-      {spot > 0 && <div style={{position: 'absolute', inset: 0, background: `radial-gradient(circle at ${winX}px ${winY}px, transparent 60px, rgba(19,19,19,0.6) 130px)`, opacity: spot}} />}
+      {spot > 0 && (
+        <>
+          <div style={{position: 'absolute', inset: 0, background: `radial-gradient(circle at ${winX}px ${winY}px, rgba(255,216,77,0.18) 70px, rgba(16,20,52,0.74) 210px, rgba(10,12,32,0.86) 900px)`, opacity: spot}} />
+          <div
+            style={{
+              position: 'absolute',
+              left: winX - 420,
+              top: winY - 420,
+              width: 840,
+              height: 840,
+              opacity: spot * 0.55,
+              transform: `rotate(${f * 0.7}deg)`,
+              background: 'repeating-conic-gradient(from 0deg, rgba(255,216,77,0.85) 0deg 5deg, transparent 5deg 20deg)',
+              WebkitMaskImage: 'radial-gradient(circle, black 12%, transparent 62%)',
+              maskImage: 'radial-gradient(circle, black 12%, transparent 62%)',
+            }}
+          />
+        </>
+      )}
       {f >= pic + 8 && (
-        <At x={winX} y={winY} transform={`scale(${1 + rise * 6})`}>
+        <At x={winX} y={winY} transform={`scale(${1 + rise * 8})`} style={{filter: rise > 0.1 ? `drop-shadow(0 0 ${14 * rise}px rgba(255,216,77,0.9))` : undefined}}>
           <Coin r={9} face="H" style={{transform: `scaleX(${f >= tenHeads + 10 ? 0.75 + 0.25 * Math.cos((f - tenHeads) / 6) : 1})`}} />
         </At>
       )}
       {spot > 0.5 &&
         new Array(8).fill(0).map((_, k) => {
           const a = (k / 8) * Math.PI * 2 + f / 14;
-          const rr = 120 + Math.sin(f / 7 + k) * 12;
+          const rr = 150 + Math.sin(f / 7 + k) * 12;
           return (
             <At key={k} x={winX + Math.cos(a) * rr} y={winY + Math.sin(a) * rr * 0.8} transform={`scale(${0.7 + 0.3 * Math.sin(f / 4 + k)}) rotate(${f * 4}deg)`}>
               <svg width={34} height={34} viewBox="-10 -10 20 20">
@@ -259,7 +277,7 @@ export const S3Problem: React.FC = () => {
   return (
     <AbsoluteFill>
       {/* caution tape */}
-      <div style={{position: 'absolute', left: -200, top: 40, width: 2320 * tape, height: 54, overflow: 'hidden', transform: 'rotate(-2deg)', border: `4px solid ${C.ink}`, borderLeft: 'none', borderRight: 'none'}}>
+      <div style={{position: 'absolute', left: -200, top: 74, width: 2320 * tape, height: 54, overflow: 'hidden', transform: 'rotate(-2deg)', border: `4px solid ${C.ink}`, borderLeft: 'none', borderRight: 'none'}}>
         <div style={{position: 'absolute', inset: 0, background: `repeating-linear-gradient(45deg, ${C.gold} 0 40px, ${C.ink} 40px 80px)`}} />
         <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', gap: 120, paddingLeft: 260}}>
           {[0, 1, 2, 3].map((i) => (
@@ -285,10 +303,14 @@ export const S3Problem: React.FC = () => {
       <DefCard at={backtest} x={760} y={250} term="Backtest" def="simulating a strategy on past data" rot={-3} f={f} />
 
       <VersionBelt f={f} model={model} versions={versions} keep={keep} past={past} />
-      <Pop at={versions + 6} x={420} y={430} rot={-6} f={f}>
-        <Pill bg={C.orange} color={C.white} size={36}>
-          v1 … v1000
-        </Pill>
+      {/* how many versions went through the test */}
+      <Pop at={versions - 2} x={370} y={418} rot={-3} f={f} out={keep + 24}>
+        <Card style={{width: 400, padding: '12px 24px 14px', display: 'flex', flexDirection: 'column', gap: 2}} radius={22}>
+          <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 22, color: '#6E6757', letterSpacing: '0.06em'}}>VERSIONS TESTED</span>
+          <Num size={74} color={f >= keep ? C.orange : C.blue}>
+            {Math.round(1000 * ramp(f, versions - 2, keep - 10, Easing.in(Easing.quad))).toLocaleString('en-US')}
+          </Num>
+        </Card>
       </Pop>
 
       {/* scanner gantry */}

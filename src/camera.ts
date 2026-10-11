@@ -95,17 +95,20 @@ const buildKeys = (): Key[] => {
   // SIM: pull out of the coin and drop down to the lab; push into the golden curve
   const sS = onBeat(startOf('sim') - 8);
   add(sS, {x: NEST.x, y: NEST.y}, nestZ * 1.02, 'hold');
-  add(sS + 26, center('sim'), 1, 'whip', -2);
+  // land close on the code editor, open up when the random numbers arrive
+  add(sS + 26, center('sim', -290, -210), 1.3, 'whip', -2);
+  add(c('sim', 'python', -0.1), center('sim', -280, -205), 1.32, 'linear', 0);
+  add(c('sim', 'python', 0.6), center('sim'), 1, 'inOut');
   add(c('sim', 'sharpe', -0.1), center('sim'), 1, 'inOut', 0);
-  add(c('sim', 'sharpe', 0.5), center('sim', 0, -150), 1.22, 'out');
-  add(c('sim', 'above2'), center('sim', 220, 80), 1.14, 'inOut');
-  add(c('sim', 'b10', 0.3), center('sim', -300, 20), 1.25, 'inOut');
+  add(c('sim', 'sharpe', 0.6), center('sim', 0, 30), 1.06, 'out');
+  add(c('sim', 'above2', 0.2), center('sim', 0, 40), 1.08, 'inOut');
+  add(c('sim', 'b10', 0.3), center('sim', -300, -20), 1.2, 'inOut');
   add(c('sim', 'b100', 0.3), center('sim', -160, 10), 1.16, 'inOut');
   add(c('sim', 'b1000'), center('sim', 60, -10), 1.06, 'inOut');
   add(c('sim', 'v23'), {x: CURVE_TIP.x - 120, y: CURVE_TIP.y + 60}, 1.9, 'inOut');
   add(c('sim', 'unseen'), {x: CURVE_TIP.x - 120, y: CURVE_TIP.y + 60}, 1.9, 'hold');
   add(c('sim', 'neverSeen'), {x: CURVE_TIP.x + 60, y: CURVE_TIP.y + 140}, 1.45, 'inOut');
-  add(c('sim', 'result'), {x: CURVE_TIP.x - 60, y: CURVE_TIP.y + 70}, 1.6, 'inOut');
+  add(c('sim', 'result'), {x: CURVE_TIP.x, y: CURVE_TIP.y + 130}, 1.45, 'inOut');
   add(c('sim', 'collapse', 0.25), {x: CURVE_TIP.x - 120, y: CURVE_TIP.y + 60}, 1.78, 'out');
   add(c('sim', 'collapse', 1.3), center('sim', 140, -20), 1.08, 'inOut');
 
@@ -121,15 +124,16 @@ const buildKeys = (): Key[] => {
   const fS = onBeat(startOf('fix') - 6);
   add(fS, center('cryptoB'), 1, 'hold');
   add(fS + 20, center('fix'), 1, 'whip', -1.5);
+  // the fix station is dense: gentle pushes only, so no label ever leaves the frame
   add(c('fix', 'take'), center('fix'), 1.0, 'inOut', 0);
-  add(c('fix', 'take', 0.5), center('fix', -420, -80), 1.25, 'out');
-  add(c('fix', 'two', -0.4), center('fix', 120, 20), 1.06, 'inOut');
-  add(c('fix', 'thousand'), center('fix', 200, -10), 1.1, 'inOut');
-  add(c('fix', 'p34', 0.5), center('fix', 80, 0), 1.08, 'inOut');
+  add(c('fix', 'take', 0.5), center('fix', -60, 0), 1.04, 'out');
+  add(c('fix', 'two', -0.4), center('fix', 50, 10), 1.04, 'inOut');
+  add(c('fix', 'thousand'), center('fix', 60, 0), 1.05, 'inOut');
+  add(c('fix', 'p34', 0.5), center('fix', 40, 0), 1.06, 'inOut');
 
   // CLOSE: pull back to see the whole canvas, then dive into the detective board
   const mapAt = c('close', 'map', -0.1);
-  add(mapAt, center('fix', 80, 0), 1.08, 'hold');
+  add(mapAt, center('fix', 40, 0), 1.06, 'hold');
   add(mapAt + 36, {x: MAP.x, y: MAP.y}, MAP.z, 'inOut', -1);
   const dive = Math.max(mapAt + 60, c('close', 'renaissance', -0.5));
   add(dive, {x: MAP.x, y: MAP.y}, MAP.z * 1.04, 'linear', 0);

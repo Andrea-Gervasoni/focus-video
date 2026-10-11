@@ -1,17 +1,20 @@
 import {linearTiming, TransitionSeries} from '@remotion/transitions';
 import React from 'react';
-import {AbsoluteFill, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Sequence, useCurrentFrame} from 'remotion';
 import {Soundtrack} from './audio/Soundtrack';
 import {camera, FLIP_COIN, STATIONS} from './camera';
 import {Captions} from './components/Captions';
 import {coinZoom, EndCard} from './overlay/EndCard';
 import {HookOverlay} from './overlay/HookOverlay';
-import {TOTAL_FRAMES} from './script';
+import {paperSlide, ReferencesSlate, SourceNotes} from './overlay/Sources';
+import {STORY_FRAMES, TOTAL_FRAMES} from './script';
 import {C, H, HEAD, MONO, SHADOW, STROKE, W} from './theme';
 import {cueAbs} from './timing';
 import {Grain, Ticker, World} from './world/World';
 
 const T = 18;
+/** end card -> reference slate */
+const T2 = 16;
 
 const endTiming = () => {
   // let the frozen coin hang in the air for at least ~1.2 s before diving into it
@@ -38,14 +41,19 @@ export const Stage: React.FC<{captions?: boolean}> = ({captions = true}) => {
           <World />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition presentation={coinZoom({x, y, r})} timing={linearTiming({durationInFrames: T})} />
-        <TransitionSeries.Sequence durationInFrames={TOTAL_FRAMES - endAt}>
+        <TransitionSeries.Sequence durationInFrames={STORY_FRAMES - endAt + T2}>
           <EndCard belowAt={belowAt} />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition presentation={paperSlide()} timing={linearTiming({durationInFrames: T2})} />
+        <TransitionSeries.Sequence durationInFrames={TOTAL_FRAMES - STORY_FRAMES}>
+          <ReferencesSlate />
         </TransitionSeries.Sequence>
       </TransitionSeries>
       <HookOverlay />
       <TickerLayer endAt={endAt} />
       <Grain />
       {captions && <Captions />}
+      {captions && <SourceNotes />}
     </AbsoluteFill>
   );
 };
@@ -77,11 +85,29 @@ export const FocusVideoVertical: React.FC = () => {
           <Stage captions={false} />
         </div>
       </div>
-      <Captions fontSize={60} maxWords={5} maxChars={22} bottom={590} maxWidth={960} wrap />
+      <Captions fontSize={60} maxWords={7} maxChars={36} bottom={590} maxWidth={960} wrap />
+      <SourceNotes left={60} bottom={300} size={26} maxWidth={960} wrap />
       <div style={{position: 'absolute', bottom: 470, left: 0, right: 0, textAlign: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 38, color: C.ink}}>
         Andrea Gervasoni · full article: link in bio
       </div>
+      <Sequence from={STORY_FRAMES - T2} layout="none">
+        <TallSlate />
+      </Sequence>
       <Soundtrack />
+    </AbsoluteFill>
+  );
+};
+
+/** the vertical cut ends on a full-screen, one-column reference list */
+const TallSlate: React.FC = () => {
+  const f = useCurrentFrame();
+  const e = 1 - (1 - Math.min(1, f / T2)) ** 3;
+  return (
+    <AbsoluteFill style={{transform: `translateY(${(1 - e) * 2000}px)`, zIndex: 200}}>
+      <Sequence from={T2} layout="none">
+        <ReferencesSlate tall />
+      </Sequence>
+      {f < T2 && <AbsoluteFill style={{background: C.cream}} />}
     </AbsoluteFill>
   );
 };

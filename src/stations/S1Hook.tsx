@@ -66,6 +66,7 @@ export const S1Hook: React.FC = () => {
   return (
     <AbsoluteFill style={{overflow: 'visible'}}>
       <Belts run={runEase} f={f} />
+      <div style={{position: 'absolute', left: -2400, top: -1600, width: 7200, height: 4400, background: C.cream, opacity: 0.42 * ramp(f, title - 4, title + 10), pointerEvents: 'none'}} />
       {/* hero coin: the same coin as the intro, face up */}
       <div style={{position: 'absolute', left: HERO_COIN.x - HERO_COIN.r, top: HERO_COIN.y - HERO_COIN.r}}>
         {f > scratch && (

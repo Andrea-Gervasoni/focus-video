@@ -147,6 +147,62 @@ const RandomRain: React.FC<{f: number; at: number}> = ({f, at}) => {
   );
 };
 
+/** "Sharpe = returns / risk", then a ruler where 2+ is excellent */
+const SharpeExplainer: React.FC<{f: number; sharpe: number; divided: number; risk: number; above2: number; out: number}> = ({f, sharpe, divided, risk, above2, out}) => {
+  const bar = ramp(f, divided + 2, divided + 12, easeOut);
+  const marker = sp(f, above2 + 4, {damping: 11, stiffness: 120});
+  const zone = ramp(f, above2 + 8, above2 + 20, easeOut);
+  const RW = 900;
+  const R0 = 960 - RW / 2;
+  const xOfV = (v: number) => R0 + (v / 3) * RW;
+  return (
+    <>
+      <Pop at={sharpe} x={960} y={400} f={f} out={out} outTo="up">
+        <Card style={{width: 1180, padding: '30px 56px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18}}>
+          <Pill bg={C.blue} color={C.white} size={34}>
+            SHARPE RATIO
+          </Pill>
+          <div style={{display: 'flex', alignItems: 'center', gap: 34}}>
+            <Head size={104}>Sharpe =</Head>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 400}}>
+              <div style={{opacity: f >= divided - 4 ? 1 : 0, transform: `translateY(${(1 - sp(f, divided - 4, {damping: 10, stiffness: 220})) * 40}px)`}}>
+                <Head size={96}>returns</Head>
+              </div>
+              <div style={{width: 420 * bar, height: 12, background: C.ink, borderRadius: 6, margin: '10px 0'}} />
+              <div style={{opacity: f >= risk - 2 ? 1 : 0, transform: `translateY(${(1 - sp(f, risk - 2, {damping: 10, stiffness: 220})) * -40}px)`}}>
+                <Head size={96} color={C.orange}>
+                  risk
+                </Head>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </Pop>
+      <Pop at={above2 - 4} x={960} y={790} from="down" f={f} out={out + 2} outTo="down">
+        <div style={{position: 'relative', width: RW + 120, height: 150}}>
+          <div style={{position: 'absolute', left: 60, top: 50, width: RW, height: 46, borderRadius: 23, border: `5px solid ${C.ink}`, background: C.paper, overflow: 'hidden', boxSizing: 'border-box', boxShadow: `5px 5px 0 ${C.ink}`}}>
+            <div style={{position: 'absolute', left: `${(2 / 3) * 100}%`, top: 0, bottom: 0, width: `${(1 / 3) * 100 * zone}%`, background: C.blue}} />
+            <div style={{position: 'absolute', left: `${(2 / 3) * 100}%`, top: 0, bottom: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 26, color: C.white, opacity: zone}}>
+              excellent
+            </div>
+          </div>
+          {[0, 1, 2, 3].map((v) => (
+            <div key={v} style={{position: 'absolute', left: xOfV(v) - R0 + 60 - 20, top: 106, width: 40, textAlign: 'center', fontFamily: MONO, fontWeight: 800, fontSize: 32, color: v === 2 ? C.blue : C.ink}}>
+              {v}
+            </div>
+          ))}
+          {/* the marker slides from 0 to 2 */}
+          <div style={{position: 'absolute', left: 60 + (2 / 3) * RW * marker - 18, top: 4}}>
+            <svg width={36} height={40} viewBox="0 0 36 40">
+              <path d="M4 4 L32 4 L18 34 Z" fill={C.orange} stroke={C.ink} strokeWidth={5} strokeLinejoin="round" />
+            </svg>
+          </div>
+        </div>
+      </Pop>
+    </>
+  );
+};
+
 export const S4Sim: React.FC = () => {
   const sc = useScene('sim');
   const {cue} = sc;
@@ -192,16 +248,17 @@ export const S4Sim: React.FC = () => {
   const ct = crownTrack(BASE - CROWN_HEAD_Y - 24);
   const big = TOWERS[2];
   const chartIn = b10 - 8;
+  const expOut = sharpe - 6;
 
   return (
     <AbsoluteFill>
       {/* ---- the experiment ---- */}
-      <Pop at={tested - 14} x={960} y={95} from="up" f={f} out={chartIn} outTo="up">
+      <Pop at={tested - 14} x={960} y={95} from="up" f={f} out={expOut} outTo="up">
         <Pill bg={C.blue} color={C.white} size={40}>
           THE EXPERIMENT · a Python simulation
         </Pill>
       </Pop>
-      <Pop at={tested - 8} x={560} y={340} from="down" out={chartIn} outTo="up" rot={-1.5} f={f}>
+      <Pop at={tested - 8} x={560} y={340} from="down" out={expOut} outTo="up" rot={-1.5} f={f}>
         <Card bg={C.ink} style={{width: 900, padding: 0, overflow: 'hidden'}}>
           <div style={{display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: `4px solid #2C2C2C`}}>
             {[C.orange, C.gold, C.blue].map((c) => (
@@ -222,7 +279,7 @@ export const S4Sim: React.FC = () => {
           </div>
         </Card>
       </Pop>
-      <Pop at={python + 12} x={1230} y={440} f={f} out={chartIn} outTo="up">
+      <Pop at={python + 12} x={1230} y={440} f={f} out={expOut + 2} outTo="up">
         <Card style={{width: 460, height: 600, padding: 0, overflow: 'hidden', position: 'relative'}}>
           <div style={{position: 'absolute', left: 20, top: 16, zIndex: 2}}>
             <Pill bg={C.gold} size={28}>
@@ -231,28 +288,26 @@ export const S4Sim: React.FC = () => {
           </div>
         </Card>
       </Pop>
-      {f < chartIn + 6 && <RandomRain f={f} at={python + 16} />}
-      <Pop at={tested + 6} x={1660} y={700} from="right" f={f} out={chartIn} outTo="right">
+      {f < expOut + 8 && (
+        <div style={{position: 'absolute', inset: 0, transform: `translateY(${-sp(f, expOut + 2, {damping: 15, stiffness: 170}) * 1300}px)`}}>
+          <RandomRain f={f} at={python + 16} />
+        </div>
+      )}
+      <Pop at={tested + 6} x={1660} y={700} from="right" f={f} out={expOut + 4} outTo="right">
         <div style={stickerCut(5)}>
           <Lucky size={230} expr={f >= zeroSkill ? 'shocked' : f >= random_ ? 'confident' : 'happy'} arms={f >= zeroSkill ? 'up' : 'point'} look={[-1, -0.3]} jolts={[tested + 6, random_, zeroSkill]} f={f} seed={9} />
         </div>
       </Pop>
-      {f < chartIn + 2 && (
-        <Stamp at={zeroSkill} x={560} y={620} rot={-7} size={96} f={f}>
-          ZERO SKILL
-        </Stamp>
+      {f < expOut + 20 && (
+        <div style={{position: 'absolute', inset: 0, transform: `translateY(${-sp(f, expOut, {damping: 15, stiffness: 170}) * 1300}px)`}}>
+          <Stamp at={zeroSkill} x={560} y={620} rot={-7} size={96} f={f}>
+            ZERO SKILL
+          </Stamp>
+        </div>
       )}
 
-      <DefCard at={sharpe} x={960} y={110} term="Sharpe ratio" def={<span>returns ÷ risk · above 2 = excellent</span>} f={f} out={chartIn} />
-      {/* above-2 scale */}
-      <Pop at={above2 - 2} x={1460} y={800} f={f} out={chartIn}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 14}}>
-          <div style={{position: 'relative', width: 360, height: 34, borderRadius: 99, border: `5px solid ${C.ink}`, background: C.paper, overflow: 'hidden'}}>
-            <div style={{position: 'absolute', left: `${(2 / 3) * 100}%`, right: 0, top: 0, bottom: 0, background: C.blue}} />
-          </div>
-          <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 28}}>0 · 1 · 2+ excellent</span>
-        </div>
-      </Pop>
+      {/* ---- the Sharpe ratio, explained on its own ---- */}
+      <SharpeExplainer f={f} sharpe={sharpe} divided={cue('divided')} risk={cue('risk')} above2={above2} out={chartIn} />
 
       {/* ---- the chart: 1,000 random walks + towers ---- */}
       <Pop at={chartIn} x={980} y={470} f={f}>
@@ -261,9 +316,13 @@ export const S4Sim: React.FC = () => {
       {f >= chartIn + 4 && (
         <>
           <div style={{position: 'absolute', left: PX0, top: ZERO_Y, width: PX2 - PX0, height: 3, background: C.greyLight}} />
-          <div style={{position: 'absolute', left: PX0 - 6, top: 175, fontFamily: MONO, fontWeight: 700, fontSize: 22, color: C.grey}}>
-            {shown > 0 ? `${shown.toLocaleString('en-US')} pure-noise strategies · 2 years, daily` : ''}
+          <div style={{position: 'absolute', left: PX0 - 14, top: 150, display: 'flex', flexDirection: 'column', gap: 2, opacity: shown > 0 ? (1 - ramp(f, v23 - 12, v23)) + ramp(f, collapse + 24, collapse + 36) : 0}}>
+            <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 34, color: C.ink, letterSpacing: '-0.01em', whiteSpace: 'nowrap'}}>
+              <span style={{fontFamily: MONO, color: C.blue}}>{shown.toLocaleString('en-US')}</span> strategies of pure noise
+            </div>
+            <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 20, color: '#6E6757', whiteSpace: 'nowrap'}}>cumulative return · 2 years of daily data</div>
           </div>
+          <div style={{position: 'absolute', left: PX0 - 44, top: ZERO_Y - 14, fontFamily: MONO, fontWeight: 800, fontSize: 22, color: '#6E6757'}}>0</div>
           <Curves f={f} shown={shown} draw={draw} deflate={deflate} unseen={unseenDraw} glow={glow} />
         </>
       )}
@@ -273,7 +332,7 @@ export const S4Sim: React.FC = () => {
           <svg width={20} height={620} style={{position: 'absolute', left: PX1 - 10, top: 160, overflow: 'visible'}}>
             <line x1={10} x2={10} y1={0} y2={600 * ramp(f, unseen, unseen + 12, easeOut)} stroke={C.ink} strokeWidth={6} strokeDasharray="18 14" strokeLinecap="round" />
           </svg>
-          <Pop at={unseen + 4} x={(PX1 + PX2) / 2 + 20} y={ZERO_Y + 110} f={f}>
+          <Pop at={unseen + 4} x={(PX1 + PX2) / 2 + 20} y={ZERO_Y + 40} f={f} out={collapse}>
             <Pill bg={C.paper} color={C.orange} size={36}>
               UNSEEN YEAR
               <svg width={44} height={26} viewBox="0 0 100 60">
@@ -356,8 +415,8 @@ export const S4Sim: React.FC = () => {
         </Pop>
       )}
       {frozen && <div style={{position: 'absolute', inset: -400, background: 'rgba(30,30,40,0.08)'}} />}
-      {f >= unseen + 20 && deflate < 0.4 && (
-        <Pop at={unseen + 20} x={PX2 - 140} y={CURVE_LOCAL.y - 185} rot={-4} f={f}>
+      {f >= neverSeen && deflate <= 0 && (
+        <Pop at={neverSeen} x={1590} y={100} rot={-4} f={f}>
           <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 30, color: C.goldDark, background: C.paper, border: `3px dashed ${C.goldDark}`, borderRadius: 14, padding: '4px 14px'}}>if it were skill</div>
         </Pop>
       )}
