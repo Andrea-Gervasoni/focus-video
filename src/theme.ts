@@ -2,7 +2,9 @@ import {cancelRender, continueRender, delayRender, staticFile} from 'remotion';
 
 // Fonts are self-hosted in public/fonts (SIL Open Font License), so renders never
 // depend on fonts.googleapis.com and work offline or behind a proxy.
-const FACES: [family: string, weight: string, file: string][] = [
+const FACES: [family: string, weight: string, file: string, style?: string][] = [
+  ['Instrument Serif', '400', 'fonts/InstrumentSerif-Regular.ttf'],
+  ['Instrument Serif', '400', 'fonts/InstrumentSerif-Italic.ttf', 'italic'],
   ['Bricolage Grotesque', '700', 'fonts/BricolageGrotesque-700.ttf'],
   ['Bricolage Grotesque', '800', 'fonts/BricolageGrotesque-800.ttf'],
   ['JetBrains Mono', '700', 'fonts/JetBrainsMono-700.ttf'],
@@ -12,14 +14,17 @@ const FACES: [family: string, weight: string, file: string][] = [
 if (typeof document !== 'undefined') {
   const handle = delayRender('Loading fonts');
   Promise.all(
-    FACES.map(([family, weight, file]) =>
-      new FontFace(family, `url('${staticFile(file)}') format('truetype')`, {weight, style: 'normal'}).load().then((face) => document.fonts.add(face)),
+    FACES.map(([family, weight, file, style = 'normal']) =>
+      new FontFace(family, `url('${staticFile(file)}') format('truetype')`, {weight, style}).load().then((face) => document.fonts.add(face)),
     ),
   )
     .then(() => continueRender(handle))
     .catch((err) => cancelRender(err));
 }
 
+// Type system: SERIF for titles and statements (the editorial voice), HEAD for UI, labels and
+// captions, MONO for numbers, code and sources.
+export const SERIF = "'Instrument Serif', 'Times New Roman', serif";
 export const HEAD = "'Bricolage Grotesque', sans-serif";
 export const MONO = "'JetBrains Mono', monospace";
 

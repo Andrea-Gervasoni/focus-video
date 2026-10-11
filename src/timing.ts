@@ -123,9 +123,8 @@ export const allWords = (): CaptionWord[] =>
 // for CATCH_UP frames so the scene stays in sync with the voice.
 export type Impact = {scene: SceneId; event: string; hold: number; offset?: number; strength?: number};
 export const IMPACTS: Impact[] = [
-  {scene: 'hook', event: 'coinLand', hold: 4, offset: 0.25, strength: 1},
-  {scene: 'hook', event: 'yes', hold: 3, strength: 0.7},
-  {scene: 'hook', event: 'scratch', hold: 6, strength: 1},
+  {scene: 'hook', event: 'yes', hold: 3, strength: 0.5},
+  {scene: 'hook', event: 'scratch', hold: 6, strength: 0.55},
   {scene: 'hook', event: 'title', hold: 3, strength: 0.8},
   {scene: 'who', event: 'burst', hold: 4, strength: 0.9},
   {scene: 'who', event: 'stop', hold: 3, strength: 0.6},

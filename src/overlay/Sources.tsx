@@ -5,7 +5,7 @@ import {clamp01, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
 import {Pill, Pop, Sqrt, stickerCut} from '../components/ui';
 import {SceneId} from '../script';
-import {C, HEAD, MONO, STROKE} from '../theme';
+import {C, HEAD, MONO, SERIF, STROKE} from '../theme';
 import {cueAbs, getScene, sceneFrames} from '../timing';
 
 // Every claim on screen carries its source in one fixed place (bottom left, under
@@ -88,7 +88,7 @@ const NOTES: Note[] = [
   {from: ['problem', 'quants'], to: ['problem', 'picture'], label: 'SOURCE', text: 'Bailey & López de Prado (2014) · Harvey, Liu & Zhu (2016)'},
   {from: ['problem', 'picture'], to: ['problem', null], label: 'MATH', text: '2^10 = 1,024 → one person in 1,024 gets ten heads by pure chance'},
   {from: ['sim', 'tested'], to: ['sim', null], label: 'METHOD', text: <>My Python simulation · pure-noise strategies · 730 daily returns · Sharpe × <Sqrt>365</Sqrt></>},
-  {from: ['crypto', 'crypto'], to: ['crypto', null], label: 'SOURCE', text: 'CoinGecko (2024), reported by The Defiant'},
+  {from: ['crypto', 'crypto'], to: ['crypto', 'bitcoin'], label: 'SOURCE', text: 'CoinGecko (2024), reported by The Defiant · 14,000+ of ~24,000 listed tokens are dead'},
   {from: ['fix', 'dsr'], to: ['fix', null], label: 'SOURCE', text: 'Bailey & López de Prado (2014), Journal of Portfolio Management · Sharpe 2.0, 2 years of daily data'},
 ];
 
@@ -174,7 +174,7 @@ const RefCard: React.FC<{r: Reference; w: number}> = ({r, w}) => (
     </div>
     <div style={{display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, flex: 1}}>
       <div style={{display: 'flex', alignItems: 'baseline', gap: 12, whiteSpace: 'nowrap'}}>
-        <span style={{fontFamily: HEAD, fontWeight: 800, fontSize: 29, color: C.ink, letterSpacing: '-0.01em'}}>{r.short}</span>
+        <span style={{fontFamily: SERIF, fontSize: 38, lineHeight: 1, color: C.ink}}>{r.short}</span>
       </div>
       <div style={{fontFamily: HEAD, fontWeight: 700, fontSize: 21, lineHeight: 1.18, color: C.ink, height: 52, overflow: 'hidden'}}>{r.title}</div>
       <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 16, color: '#6E6757', whiteSpace: 'nowrap', overflow: 'hidden'}}>{r.venue}</div>
@@ -198,8 +198,8 @@ export const ReferencesSlate: React.FC<{tall?: boolean}> = ({tall = false}) => {
           </Pill>
         </Pop>
         <Pop at={5} x={x0 + 300} y={118} f={f} style={{transform: 'translate(0, -50%)'}}>
-          <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 38, color: C.ink, whiteSpace: 'nowrap', letterSpacing: '-0.01em'}}>
-            Every number on screen comes from the article and the work it cites.
+          <div style={{fontFamily: SERIF, fontSize: 50, color: C.ink, whiteSpace: 'nowrap'}}>
+            Every number on screen comes from the article and <i>the work it cites.</i>
           </div>
         </Pop>
         {REFERENCES.map((r, i) => {
@@ -235,8 +235,8 @@ const ReferencesTall: React.FC<{f: number}> = ({f}) => (
       </Pill>
     </Pop>
     <Pop at={5} x={540} y={250} f={f}>
-      <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 38, color: C.ink, textAlign: 'center', width: 960, lineHeight: 1.1}}>
-        Every number on screen comes from the article and the work it cites.
+      <div style={{fontFamily: SERIF, fontSize: 52, color: C.ink, textAlign: 'center', width: 960, lineHeight: 1.05}}>
+        Every number on screen comes from the article and <i>the work it cites.</i>
       </div>
     </Pop>
     {REFERENCES.map((r, i) => (

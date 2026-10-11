@@ -3,8 +3,8 @@ import React from 'react';
 import {AbsoluteFill, interpolateColors, random} from 'remotion';
 import {clamp01, easeOut, lerp, ramp, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Annotate, At, Card, DefCard, Head, Num, Pill, Pop, Sqrt, Sticker, stickerCut} from '../components/ui';
-import {C, HEAD, MONO} from '../theme';
+import {Annotate, At, Card, DefCard, Head, Num, Pill, Pop, Sticker, stickerCut} from '../components/ui';
+import {C, HEAD, MONO, SERIF} from '../theme';
 import {useScene} from '../timing';
 
 // DSR of a backtest with Sharpe 2.0 (two years of daily data), from the article
@@ -97,33 +97,20 @@ export const S6Fix: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      {/* sunburst behind the title card, like the hook's reveal */}
-      {f >= fix - 24 && f < dsr + 10 && (
-        <div
-          style={{
-            position: 'absolute',
-            left: 960 - 900,
-            top: 470 - 900,
-            width: 1800,
-            height: 1800,
-            opacity: 0.5 * sp(f, fix - 24, {damping: 20, stiffness: 120}) * (1 - ramp(f, dsr - 6, dsr + 8)),
-            transform: `rotate(${f * 0.5}deg) scale(${0.6 + 0.4 * sp(f, fix - 24, {damping: 14, stiffness: 120})})`,
-            background: `repeating-conic-gradient(from 0deg, ${C.blueSoft} 0deg 7deg, transparent 7deg 22deg)`,
-            WebkitMaskImage: 'radial-gradient(circle, black 18%, transparent 62%)',
-            maskImage: 'radial-gradient(circle, black 18%, transparent 62%)',
-          }}
-        />
+      {/* "The fix." lands big, then steps back for the definition */}
+      {f < dsr + 16 && (
+        <At
+          x={960}
+          y={lerp(470, 330, ramp(f, dsr - 6, dsr + 10))}
+          transform={`scale(${sp(f, fix - 14, {damping: 9, stiffness: 190}) * (1 - 0.45 * ramp(f, dsr - 6, dsr + 10))})`}
+          style={{opacity: 1 - ramp(f, dsr, dsr + 14)}}
+        >
+          <div style={{position: 'relative', fontFamily: SERIF, fontSize: 240, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
+            The <span style={{fontStyle: 'italic', color: C.blue}}>fix.</span>
+            <Annotate at={fix + 2} d="M300 236 Q470 222 640 232" color={C.blue} width={11} w={10} h={10} f={f} />
+          </div>
+        </At>
       )}
-      {/* "THE FIX" lands big, then tucks into the corner */}
-      <At
-        x={lerp(960, 250, sp(f, dsr - 4, {damping: 15, stiffness: 120}))}
-        y={lerp(470, 110, sp(f, dsr - 4, {damping: 15, stiffness: 120}))}
-        transform={`scale(${lerp(2.6, 1, sp(f, dsr - 4, {damping: 15, stiffness: 120})) * sp(f, fix - 24, {damping: 9, stiffness: 200})}) rotate(-4deg)`}
-      >
-        <Pill bg={C.blue} color={C.white} size={50}>
-          THE FIX
-        </Pill>
-      </At>
       <DefCard at={dsr} x={1000} y={182} term="Deflated Sharpe Ratio" def="Sharpe, corrected for how many versions you tried" f={f} width={1080} />
 
       <Sticker at={versions} x={840} y={300} rot={-5} bg={C.orange} color={C.white} size={36} f={f}>
@@ -155,25 +142,6 @@ export const S6Fix: React.FC = () => {
         h={10}
         f={f}
       />
-
-      {/* the formula behind the gauge, for the curious */}
-      <Pop at={versions + 10} x={328} y={742} rot={-1.5} f={f}>
-        <Card style={{width: 404, padding: '12px 16px 14px', display: 'flex', flexDirection: 'column', gap: 7}} radius={20}>
-          <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
-            <Pill bg={C.ink} color={C.white} size={20} mono>
-              THE MATH
-            </Pill>
-            <span style={{fontFamily: MONO, fontWeight: 700, fontSize: 16, color: '#6E6757'}}>Bailey &amp; López de Prado</span>
-          </div>
-          <div style={{fontFamily: MONO, fontWeight: 800, fontSize: 21, color: C.ink, whiteSpace: 'nowrap', display: 'flex', alignItems: 'flex-end'}}>
-            DSR = Φ((SR − SR<sub style={{fontSize: 13}}>0</sub>)·<Sqrt>T−1</Sqrt>/σ)
-          </div>
-          <div style={{fontFamily: HEAD, fontWeight: 700, fontSize: 20, lineHeight: 1.15, color: C.ink}}>
-            SR<sub style={{fontSize: 12}}>0</sub> = the best Sharpe that N lucky tries would give
-          </div>
-          <div style={{fontFamily: MONO, fontWeight: 800, fontSize: 18, color: C.orange, whiteSpace: 'nowrap'}}>more tries → higher SR<sub style={{fontSize: 11}}>0</sub> → lower DSR</div>
-        </Card>
-      </Pop>
 
       {/* slot machine */}
       <Pop at={dsr + 4} x={840} y={560} from="down" f={f}>

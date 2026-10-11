@@ -18,8 +18,6 @@ export const STATIONS = {
 export type StationId = keyof typeof STATIONS;
 export const center = (s: StationId, dx = 0, dy = 0) => ({x: STATIONS[s].x + 960 + dx, y: STATIONS[s].y + 540 + dy});
 
-/** the hero coin on the hook conveyor (world px) and its radius */
-export const HERO_COIN = {x: 960, y: 560, r: 60};
 /** the golden coin on the "best version" card in the problem station; the 1,024 grid lives inside it */
 export const NEST = {x: STATIONS.problem.x + 1430, y: STATIONS.problem.y + 470, r: 70, scale: 0.11};
 /** the tip of the golden curve (end of the backtest) in the sim station */
@@ -61,18 +59,13 @@ const buildKeys = (): Key[] => {
   const add = (f: number, p: {x: number; y: number}, z: number, ease: Ease = 'inOut', r = 0) => k.push({f, x: p.x, y: p.y, z, r, ease});
   const c = cueAbs;
 
-  // HOOK: start deep inside the hero coin, pull back on "changed my mind"
-  const hero = {x: HERO_COIN.x, y: HERO_COIN.y};
-  add(0, hero, 5);
-  const scratch = c('hook', 'scratch');
-  add(scratch + 6, hero, 5, 'hold');
-  add(scratch + 40, center('hook', 0, -40), 0.6, 'out', -2);
-  add(c('hook', 'luckyIn'), center('hook', 0, -30), 0.66, 'inOut', 0);
-  add(c('hook', 'title') + 6, center('hook', 0, -40), 0.82, 'out');
+  // HOOK: the cover is staged inside the station (its own push and pull); the camera breathes
+  add(0, center('hook'), 1);
+  add(c('hook', 'title') + 6, center('hook'), 1.02, 'inOut');
 
   // WHO: whip right to the name card, slide down to the bar race
   const whoS = onBeat(startOf('who') - 6);
-  add(whoS, center('hook', 0, -40), 0.82, 'hold');
+  add(whoS, center('hook'), 1.02, 'hold');
   add(whoS + 16, center('who'), 1, 'whip', 1.5);
   add(c('who', 'logic'), center('who'), 1.0, 'inOut', 0);
   add(c('who', 'none', 0.3), center('who', 0, 20), 1.04, 'inOut');

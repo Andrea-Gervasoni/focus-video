@@ -5,7 +5,7 @@ import {AbsoluteFill, random} from 'remotion';
 import {clamp01, easeOut, ramp, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
 import {Annotate, At, DefCard, Head, Kinetic, Num, Pill, Pop, stickerCut} from '../components/ui';
-import {C, MONO} from '../theme';
+import {C, MONO, SERIF} from '../theme';
 import {useScene} from '../timing';
 
 // 100 tokens; 58 die (14,000 of ~24,000 is about 58%)
@@ -51,12 +51,10 @@ export const S5Crypto: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <Pop at={crypto - 14} x={700} y={110} from="up" f={f}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 18}}>
-          <Pill bg={C.ink} color={C.white} size={50}>
-            IN CRYPTO
-          </Pill>
-          {f >= worse - 2 && <Kinetic text="it’s even worse" at={worse - 2} size={66} color={C.orange} f={f} />}
+      <Pop at={crypto - 14} x={760} y={130} from="up" f={f}>
+        <div style={{display: 'flex', alignItems: 'baseline', gap: 22, whiteSpace: 'nowrap'}}>
+          <span style={{fontFamily: SERIF, fontSize: 96, lineHeight: 1, color: C.ink}}>In crypto,</span>
+          {f >= worse - 2 && <Kinetic text="it’s even worse." at={worse - 2} size={96} color={C.orange} f={f} serif italic stagger={1.1} />}
         </div>
       </Pop>
       {/* the graveyard */}
@@ -131,8 +129,10 @@ export const S5CryptoB: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <Pop at={btc} x={960} y={130} from="up" f={f}>
-        <Pill size={54}>How much history?</Pill>
+      <Pop at={btc} x={960} y={150} from="up" f={f}>
+        <div style={{fontFamily: SERIF, fontSize: 104, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
+          How much <i style={{color: C.blue}}>history?</i>
+        </div>
       </Pop>
       {/* stocks: ~100 years */}
       <Pop at={btc + 2} x={TL_X0 + 140} y={300} f={f}>

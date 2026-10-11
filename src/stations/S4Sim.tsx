@@ -6,7 +6,7 @@ import {CrownIcon, Lucky, LUCKY_FEET} from '../components/Lucky';
 import {Annotate, At, Card, DefCard, Head, Num, Odometer, Pill, Pop, Stamp, stickerCut} from '../components/ui';
 import {crownTrack, sample} from '../sim/physics';
 import {sim} from '../sim/curves';
-import {C, HEAD, MONO} from '../theme';
+import {C, HEAD, MONO, SERIF} from '../theme';
 import {useScene} from '../timing';
 
 // plot geometry (station px): in-sample 730 days, then the unseen year at the same scale
@@ -163,16 +163,14 @@ const SharpeExplainer: React.FC<{f: number; sharpe: number; divided: number; ris
             SHARPE RATIO
           </Pill>
           <div style={{display: 'flex', alignItems: 'center', gap: 34}}>
-            <Head size={104}>Sharpe =</Head>
+            <span style={{fontFamily: SERIF, fontSize: 130, lineHeight: 1}}>Sharpe =</span>
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 400}}>
               <div style={{opacity: f >= divided - 4 ? 1 : 0, transform: `translateY(${(1 - sp(f, divided - 4, {damping: 10, stiffness: 220})) * 40}px)`}}>
-                <Head size={96}>returns</Head>
+                <span style={{fontFamily: SERIF, fontSize: 116, lineHeight: 1}}>returns</span>
               </div>
               <div style={{width: 420 * bar, height: 12, background: C.ink, borderRadius: 6, margin: '10px 0'}} />
               <div style={{opacity: f >= risk - 2 ? 1 : 0, transform: `translateY(${(1 - sp(f, risk - 2, {damping: 10, stiffness: 220})) * -40}px)`}}>
-                <Head size={96} color={C.orange}>
-                  risk
-                </Head>
+                <span style={{fontFamily: SERIF, fontStyle: 'italic', fontSize: 116, lineHeight: 1, color: C.orange}}>risk</span>
               </div>
             </div>
           </div>
@@ -253,10 +251,10 @@ export const S4Sim: React.FC = () => {
   return (
     <AbsoluteFill>
       {/* ---- the experiment ---- */}
-      <Pop at={tested - 14} x={960} y={95} from="up" f={f} out={expOut} outTo="up">
-        <Pill bg={C.blue} color={C.white} size={40}>
-          THE EXPERIMENT · a Python simulation
-        </Pill>
+      <Pop at={tested - 10} x={560} y={110} from="up" out={expOut} outTo="up" f={f}>
+        <div style={{fontFamily: SERIF, fontSize: 96, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
+          So I <i style={{color: C.blue}}>tested it.</i>
+        </div>
       </Pop>
       <Pop at={tested - 8} x={560} y={340} from="down" out={expOut} outTo="up" rot={-1.5} f={f}>
         <Card bg={C.ink} style={{width: 900, padding: 0, overflow: 'hidden'}}>
@@ -317,8 +315,8 @@ export const S4Sim: React.FC = () => {
         <>
           <div style={{position: 'absolute', left: PX0, top: ZERO_Y, width: PX2 - PX0, height: 3, background: C.greyLight}} />
           <div style={{position: 'absolute', left: PX0 - 14, top: 150, display: 'flex', flexDirection: 'column', gap: 2, opacity: shown > 0 ? (1 - ramp(f, v23 - 12, v23)) + ramp(f, collapse + 24, collapse + 36) : 0}}>
-            <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 34, color: C.ink, letterSpacing: '-0.01em', whiteSpace: 'nowrap'}}>
-              <span style={{fontFamily: MONO, color: C.blue}}>{shown.toLocaleString('en-US')}</span> strategies of pure noise
+            <div style={{fontFamily: SERIF, fontSize: 52, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
+              <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 40, color: C.blue}}>{shown.toLocaleString('en-US')}</span> strategies of <i>pure noise</i>
             </div>
             <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 20, color: '#6E6757', whiteSpace: 'nowrap'}}>cumulative return · 2 years of daily data</div>
           </div>

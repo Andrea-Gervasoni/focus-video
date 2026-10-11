@@ -1,12 +1,11 @@
 import {CameraMotionBlur} from '@remotion/motion-blur';
-import {noise2D} from '@remotion/noise';
 import React from 'react';
 import {AbsoluteFill, random, staticFile, useCurrentFrame} from 'remotion';
 import {Cam, camera, cameraSpeed, STATIONS, StationId, viewRect, worldTransform} from '../camera';
 import {clamp01, sp} from '../anim';
 import {SceneId, SCENES, STORY_FRAMES} from '../script';
-import {C, HEAD, MONO} from '../theme';
-import {impactPulse, sceneFrames} from '../timing';
+import {C, SERIF} from '../theme';
+import {sceneFrames} from '../timing';
 import {Doodles} from './Doodles';
 import {S1Hook} from '../stations/S1Hook';
 import {S2Who, S2WhoB} from '../stations/S2Who';
@@ -17,7 +16,7 @@ import {S6Fix} from '../stations/S6Fix';
 import {S7Close} from '../stations/S7Close';
 
 const STATION_VIEWS: {id: StationId; C: React.FC; extra?: [number, number, number, number]}[] = [
-  {id: 'hook', C: S1Hook, extra: [-2200, -900, 2600, 1500]},
+  {id: 'hook', C: S1Hook, extra: [-700, -700, 700, 700]},
   {id: 'who', C: S2Who},
   {id: 'whoB', C: S2WhoB},
   {id: 'problem', C: S3Problem},
@@ -35,56 +34,7 @@ const visible = (cam: Cam, id: StationId, extra?: [number, number, number, numbe
   return r.x0 < v.x1 && r.x1 > v.x0 && r.y0 < v.y1 && r.y1 > v.y0;
 };
 
-// ---------- parallax ----------
-
-type PItem = {x: number; y: number; kind: number; s: number; rot: number; seed: number};
-const makeItems = (n: number, tw: number, th: number, key: string): PItem[] =>
-  new Array(n).fill(0).map((_, i) => ({
-    x: random(`${key}x${i}`) * tw,
-    y: random(`${key}y${i}`) * th,
-    kind: Math.floor(random(`${key}k${i}`) * 3),
-    s: 0.6 + random(`${key}s${i}`) * 0.9,
-    rot: (random(`${key}r${i}`) - 0.5) * 40,
-    seed: i,
-  }));
-
-const FAR = {tw: 5200, th: 3200, items: makeItems(46, 5200, 3200, 'far')};
-const NEAR = {tw: 5200, th: 3400, items: makeItems(9, 5200, 3400, 'near')};
-
-const wrap = (v: number, m: number) => ((((v + m / 2) % m) + m) % m) - m / 2;
-
-const Candle: React.FC<{s: number}> = ({s}) => (
-  <svg width={60 * s} height={160 * s} viewBox="0 0 60 160">
-    <line x1={30} x2={30} y1={0} y2={160} stroke="#CFC6AE" strokeWidth={6} />
-    <rect x={10} y={40} width={40} height={80} rx={6} fill="#DDD4BC" />
-  </svg>
-);
-const MiniCoin: React.FC<{s: number; blur?: number}> = ({s, blur = 0}) => (
-  <svg width={70 * s} height={70 * s} viewBox="-50 -50 100 100" style={{filter: blur ? `blur(${blur}px)` : undefined}}>
-    <circle r={44} fill={blur ? C.gold : '#E9DDB4'} stroke={blur ? C.goldDark : '#D9CCA3'} strokeWidth={8} />
-  </svg>
-);
-
-const FarLayer: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
-  const k = 0.32;
-  const zs = Math.pow(cam.z, 0.35);
-  return (
-    <AbsoluteFill style={{overflow: 'hidden'}}>
-      {FAR.items.map((it, i) => {
-        const x = wrap(it.x - cam.x * k + noise2D('fx', i, f * 0.004) * 30, FAR.tw);
-        const y = wrap(it.y - cam.y * k + noise2D('fy', i, f * 0.004) * 30, FAR.th);
-        const sx = 960 + x * zs;
-        const sy = 540 + y * zs;
-        if (sx < -300 || sx > 2220 || sy < -300 || sy > 1380) return null;
-        return (
-          <div key={i} style={{position: 'absolute', left: sx, top: sy, transform: `translate(-50%,-50%) scale(${zs}) rotate(${it.rot}deg)`}}>
-            {it.kind === 0 ? <MiniCoin s={it.s} /> : <Candle s={it.s} />}
-          </div>
-        );
-      })}
-    </AbsoluteFill>
-  );
-};
+// ---------- paper ----------
 
 const GridLayer: React.FC<{cam: Cam}> = ({cam}) => {
   const k = 0.7;
@@ -98,28 +48,6 @@ const GridLayer: React.FC<{cam: Cam}> = ({cam}) => {
         backgroundPosition: `${960 - cam.x * k * zs}px ${540 - cam.y * k * zs}px`,
       }}
     />
-  );
-};
-
-const NearLayer: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
-  if (cam.z > 2.2) return null;
-  const k = 1.7;
-  const zs = Math.pow(cam.z, 1.25);
-  return (
-    <AbsoluteFill style={{overflow: 'hidden', pointerEvents: 'none'}}>
-      {NEAR.items.map((it, i) => {
-        const x = wrap(it.x - cam.x * k + noise2D('nx', i, f * 0.006) * 60, NEAR.tw);
-        const y = wrap(it.y - cam.y * k + noise2D('ny', i, f * 0.006) * 60, NEAR.th);
-        const sx = 960 + x * zs;
-        const sy = 540 + y * zs;
-        if (sx < -400 || sx > 2320 || sy < -400 || sy > 1480) return null;
-        return (
-          <div key={i} style={{position: 'absolute', left: sx, top: sy, opacity: 0.55, transform: `translate(-50%,-50%) scale(${zs * 2.4})`}}>
-            {it.kind === 2 ? <div style={{width: 18, height: 18, borderRadius: 99, background: C.creamDark, filter: 'blur(3px)'}} /> : <MiniCoin s={it.s} blur={6} />}
-          </div>
-        );
-      })}
-    </AbsoluteFill>
   );
 };
 
@@ -160,10 +88,10 @@ const StationLabels: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
               whiteSpace: 'nowrap',
             }}
           >
-            <div style={{background: scene === 'close' ? C.orange : C.blue, color: C.white, fontFamily: MONO, fontWeight: 800, fontSize: 150, padding: '20px 50px', display: 'flex', alignItems: 'center'}}>
-              {String(i + 1).padStart(2, '0')}
+            <div style={{background: scene === 'close' ? C.orange : C.blue, color: C.white, fontFamily: SERIF, fontStyle: 'italic', fontSize: 170, padding: '6px 54px 14px', display: 'flex', alignItems: 'center', lineHeight: 1.1}}>
+              {ROMAN[i]}
             </div>
-            <div style={{background: C.paper, color: C.ink, fontFamily: HEAD, fontWeight: 800, fontSize: 150, padding: '20px 60px', letterSpacing: '-0.02em'}}>{CHAPTERS[scene]}</div>
+            <div style={{background: C.paper, color: C.ink, fontFamily: SERIF, fontSize: 170, padding: '6px 64px 14px', lineHeight: 1.1}}>{CHAPTERS[scene]}</div>
           </div>
         );
       })}
@@ -173,31 +101,14 @@ const StationLabels: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
 
 // ---------- the world ----------
 
-const ChromaDefs: React.FC<{d: number}> = ({d}) => (
-  <svg width={0} height={0} style={{position: 'absolute'}}>
-    <filter id="ca" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-      <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r" />
-      <feOffset in="r" dx={d} dy={d * 0.3} result="ro" />
-      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="g" />
-      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="b" />
-      <feOffset in="b" dx={-d} dy={-d * 0.3} result="bo" />
-      <feComposite in="ro" in2="g" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="rg" />
-      <feComposite in="rg" in2="bo" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
-    </filter>
-  </svg>
-);
-
 const WorldView: React.FC<{forceAll?: boolean}> = ({forceAll}) => {
   const f = useCurrentFrame();
   const cam = camera(f);
-  const ca = impactPulse(Math.floor(f), 9);
   return (
-    <AbsoluteFill style={{background: C.cream, overflow: 'hidden', filter: ca > 0.04 ? 'url(#ca)' : undefined}}>
-      {ca > 0.04 && <ChromaDefs d={ca * 14} />}
-      <FarLayer cam={cam} f={f} />
+    <AbsoluteFill style={{background: C.cream, overflow: 'hidden'}}>
       <GridLayer cam={cam} />
       <div style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0, transform: worldTransform(cam), transformOrigin: '0 0'}}>
-        <Doodles cam={cam} />
+        <Doodles />
         {STATION_VIEWS.map(({id, C: Comp, extra}) =>
           forceAll || visible(cam, id, extra) ? (
             <div key={id} style={{position: 'absolute', left: STATIONS[id].x, top: STATIONS[id].y, width: 1920, height: 1080}}>
@@ -207,7 +118,6 @@ const WorldView: React.FC<{forceAll?: boolean}> = ({forceAll}) => {
         )}
         <StationLabels cam={cam} f={f} />
       </div>
-      <NearLayer cam={cam} f={f} />
     </AbsoluteFill>
   );
 };
@@ -226,75 +136,51 @@ export const World: React.FC = () => {
 
 // ---------- screen overlays ----------
 
-const TICKS = new Array(40).fill(0).map((_, i) => ({up: random(`tu${i}`) > 0.45, v: (random(`tv${i}`) * 4).toFixed(2), w: random(`tw${i}`)}));
-
-// ---------- chapter bug: where we are in the story, pinned to the left of the ticker ----------
+// ---------- chapter header: roman numeral + chapter title + a hairline that fills with the story ----------
 const CHAPTERS: Record<SceneId, string> = {
   hook: 'The question',
   who: 'Why I believed it',
   problem: 'The trap',
   sim: 'The experiment',
-  crypto: 'Even worse in crypto',
+  crypto: 'Crypto',
   fix: 'The fix',
   close: 'What comes next',
 };
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
 
-const ChapterBug: React.FC<{f: number}> = ({f}) => {
+export const ChapterHeader: React.FC<{opacity?: number}> = ({opacity = 1}) => {
+  const f = useCurrentFrame();
+  if (opacity <= 0.01) return null;
   // switch chapter a little before the scene starts, while the camera whips there
   let idx = 0;
   SCENES.forEach((s, i) => {
     if (i > 0 && f >= sceneFrames(s).from - 6) idx = i;
   });
   const changeAt = idx === 0 ? 0 : sceneFrames(SCENES[idx]).from - 6;
-  const p = sp(f, changeAt, {damping: 14, stiffness: 220});
+  const p = sp(f, changeAt, {damping: 16, stiffness: 200});
   const progress = clamp01(f / STORY_FRAMES);
-  const prevTitle = idx > 0 ? CHAPTERS[SCENES[idx - 1].id] : '';
+  const rows = [
+    {n: idx > 0 ? ROMAN[idx - 1] : '', t: idx > 0 ? CHAPTERS[SCENES[idx - 1].id] : '', y: -p * 52, o: 1 - p},
+    {n: ROMAN[idx], t: CHAPTERS[SCENES[idx].id], y: (1 - p) * 52, o: p},
+  ];
   return (
-    <>
-      <div style={{position: 'absolute', left: 0, top: 0, height: 44, display: 'flex', alignItems: 'stretch', zIndex: 2, boxShadow: `14px 0 18px ${C.ink}`}}>
-        <div style={{background: C.blue, color: C.white, fontFamily: MONO, fontWeight: 800, fontSize: 20, display: 'flex', alignItems: 'center', padding: '0 16px', letterSpacing: '0.04em'}}>
-          {String(idx + 1).padStart(2, '0')}
-          <span style={{opacity: 0.55}}>/{String(SCENES.length).padStart(2, '0')}</span>
-        </div>
-        <div style={{position: 'relative', width: 330, background: C.ink, overflow: 'hidden', borderRight: `3px solid ${C.blue}`}}>
-          {[
-            {t: prevTitle, y: -p * 44},
-            {t: CHAPTERS[SCENES[idx].id], y: (1 - p) * 44},
-          ].map((it, i) =>
-            it.t ? (
-              <div key={i} style={{position: 'absolute', left: 16, top: it.y, height: 44, display: 'flex', alignItems: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 24, color: C.paper, whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.02em'}}>
-                {it.t}
-              </div>
-            ) : null,
-          )}
-        </div>
+    <div style={{position: 'absolute', left: 0, right: 0, top: 0, height: 80, opacity, zIndex: 90, pointerEvents: 'none'}}>
+      <div style={{position: 'absolute', left: 46, top: 22, height: 52, width: 760, overflow: 'hidden'}}>
+        {rows.map((r, i) =>
+          r.t ? (
+            <div key={i} style={{position: 'absolute', left: 0, top: r.y, height: 52, display: 'flex', alignItems: 'baseline', gap: 16, opacity: r.o, whiteSpace: 'nowrap'}}>
+              <span style={{fontFamily: SERIF, fontStyle: 'italic', fontSize: 40, color: C.blue, minWidth: 44}}>{r.n}</span>
+              <span style={{width: 2, height: 30, background: C.ink, opacity: 0.35, alignSelf: 'center'}} />
+              <span style={{fontFamily: SERIF, fontSize: 40, color: C.ink, letterSpacing: '0.005em'}}>{r.t}</span>
+            </div>
+          ) : null,
+        )}
       </div>
-      {/* story progress along the bottom edge of the band */}
-      <div style={{position: 'absolute', left: 0, bottom: 0, height: 4, width: 1920 * progress, background: C.gold, zIndex: 3}} />
-      {SCENES.slice(1).map((s) => (
-        <div key={s.id} style={{position: 'absolute', left: (1920 * sceneFrames(s).from) / STORY_FRAMES - 2, bottom: 0, width: 4, height: 8, background: C.paper, zIndex: 3}} />
-      ))}
-    </>
-  );
-};
-
-export const Ticker: React.FC<{opacity?: number}> = ({opacity = 1}) => {
-  const f = useCurrentFrame();
-  const x = -((f * 2.2) % 2400);
-  if (opacity <= 0.01) return null;
-  return (
-    <div style={{position: 'absolute', left: 0, right: 0, top: 0, height: 44, background: C.ink, overflow: 'hidden', opacity, zIndex: 90}}>
-      <ChapterBug f={f} />
-      <div style={{position: 'absolute', left: x, top: 0, height: 44, display: 'flex', alignItems: 'center', gap: 34, whiteSpace: 'nowrap'}}>
-        {[...TICKS, ...TICKS].map((t, i) => (
-          <div key={i} style={{display: 'flex', alignItems: 'center', gap: 10, fontFamily: MONO, fontWeight: 700, fontSize: 21, color: t.up ? '#8FA0FF' : '#FF9466'}}>
-            <svg width={14} height={12} viewBox="0 0 14 12">
-              <path d={t.up ? 'M7 0 L14 12 L0 12 Z' : 'M0 0 L14 0 L7 12 Z'} fill={t.up ? '#8FA0FF' : '#FF9466'} />
-            </svg>
-            {t.up ? '+' : '-'}
-            {t.v}%
-            <span style={{color: '#5A5A5A'}}>{'|'.repeat(1 + Math.floor(t.w * 3))}</span>
-          </div>
+      {/* the story so far: a hairline that fills with gold, with a tick per chapter */}
+      <div style={{position: 'absolute', left: 46, right: 46, top: 14, height: 2, background: 'rgba(19,19,19,0.18)'}}>
+        <div style={{position: 'absolute', left: 0, top: -1, height: 4, width: `${progress * 100}%`, background: C.goldDark, borderRadius: 2}} />
+        {SCENES.slice(1).map((s) => (
+          <div key={s.id} style={{position: 'absolute', left: `${(sceneFrames(s).from / STORY_FRAMES) * 100}%`, top: -5, width: 2, height: 12, background: C.ink, opacity: 0.45}} />
         ))}
       </div>
     </div>

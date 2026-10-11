@@ -5,11 +5,11 @@ import {clamp01, easeOut, lerp, ramp, sp, wobble} from '../anim';
 import {Lucky} from '../components/Lucky';
 import {Annotate, At, Card, Coin, Head, Kinetic, Num, Pill, Pop, Sticker, stickerCut} from '../components/ui';
 import {feeCoinTracks, sample} from '../sim/physics';
-import {C, HEAD, MONO} from '../theme';
+import {C, HEAD, MONO, SERIF} from '../theme';
 import {useScene} from '../timing';
 
 // ---------- a cartoon (not real) trader ----------
-const Trader: React.FC<{f: number; panic: number}> = ({f, panic}) => {
+export const Trader: React.FC<{f: number; panic: number}> = ({f, panic}) => {
   const jx = (random(`tx${Math.floor(f)}`) - 0.5) * 7 * panic;
   const jy = (random(`ty${Math.floor(f)}`) - 0.5) * 7 * panic;
   const drop = (f * 2.4) % 40;
@@ -146,10 +146,10 @@ export const S2Who: React.FC = () => {
       })}
 
       {/* name card */}
-      <At x={960} y={lerp(400, 205, nameUp)} transform={`scale(${lerp(1, 0.7, nameUp)})`}>
+      <At x={960} y={lerp(400, 188, nameUp)} transform={`scale(${lerp(1, 0.64, nameUp)})`}>
         <Pop at={name - 7} x={0} y={0} f={f} from="scale">
           <Card style={{padding: '26px 56px 30px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14}}>
-            <Kinetic text="Andrea Gervasoni" at={name} size={104} f={f} />
+            <Kinetic text="Andrea Gervasoni" at={name} size={128} f={f} serif stagger={1.3} />
             <Pill bg={C.blue} color={C.white} size={38} style={{transform: `scale(${sp(f, tks - 6)})`}}>
               TKS Focus: Blockchain
             </Pill>
@@ -161,18 +161,16 @@ export const S2Who: React.FC = () => {
       </Sticker>
 
       {/* the logic, as a formula */}
-      <Pop at={logic} x={960} y={330} f={f}>
+      <Pop at={logic} x={960} y={348} f={f}>
         <Card style={{display: 'flex', alignItems: 'center', gap: 22, padding: '14px 34px'}} radius={24}>
-          <Head size={50}>emotions</Head>
+          <span style={{fontFamily: SERIF, fontSize: 66, lineHeight: 1}}>emotions</span>
           <svg width={80} height={40} viewBox="0 0 80 40">
             <path d="M4 20 L70 20 M50 6 L72 20 L50 34" stroke={C.ink} strokeWidth={8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <Head size={50} color={C.orange}>
-            losses
-          </Head>
+          <span style={{fontFamily: SERIF, fontStyle: 'italic', fontSize: 66, lineHeight: 1, color: C.orange}}>losses</span>
         </Card>
       </Pop>
-      <Annotate at={logic + 8} d="M780 372 Q960 392 1140 368" color={C.orange} width={7} w={10} h={10} f={f} />
+      <Annotate at={logic + 8} d="M780 400 Q960 420 1140 396" color={C.orange} width={7} w={10} h={10} f={f} />
 
       {/* the duel */}
       <Pop at={duel} x={460} y={700} from="left" f={f}>

@@ -4,7 +4,7 @@ import {clamp01, lerp, ramp, sp} from '../anim';
 import {FLIP_COIN} from '../camera';
 import {Lucky} from '../components/Lucky';
 import {Annotate, Card, Coin3D, Head, Pill, Pop, stickerCut} from '../components/ui';
-import {C, HEAD} from '../theme';
+import {C, HEAD, SERIF} from '../theme';
 import {useScene} from '../timing';
 
 // Names only, no logos: four who tried, as polaroids on a detective board.
@@ -71,7 +71,7 @@ export const S7Close: React.FC = () => {
   return (
     <AbsoluteFill>
       {/* cork board */}
-      <div style={{position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, transform: `translateX(${-shift * 120}px) scale(${1 - shift * 0.12})`, transformOrigin: '0% 50%', ...soft}}>
+      <div style={{position: 'absolute', left: 0, top: 0, width: 1920, height: 1080, transform: `translateX(${-shift * 60}px) scale(${1 - shift * 0.22})`, transformOrigin: '0% 50%', ...soft}}>
         <Pop at={board - 6} x={760} y={470} f={f}>
           <div
             style={{
@@ -121,7 +121,7 @@ export const S7Close: React.FC = () => {
       </div>
 
       {/* a laptop vs the big funds */}
-      <Pop at={student + 4} x={1330} y={620} rot={-8} f={f} out={flip}>
+      <Pop at={student + 4} x={1350} y={640} rot={-8} f={f} out={flip}>
         <svg width={170} height={120} viewBox="0 0 170 120">
           <rect x={25} y={8} width={120} height={80} rx={8} fill={C.paper} stroke={C.ink} strokeWidth={7} />
           <rect x={38} y={20} width={94} height={56} rx={4} fill={C.blueSoft} />
@@ -129,9 +129,9 @@ export const S7Close: React.FC = () => {
           <path d="M6 96 L164 96 L150 112 L20 112 Z" fill={C.greyLight} stroke={C.ink} strokeWidth={7} strokeLinejoin="round" />
         </svg>
       </Pop>
-      <Pop at={compete + 2} x={1020} y={650} from="down" f={f} out={flip}>
+      <Pop at={compete + 2} x={1110} y={680} from="down" f={f} out={flip}>
         <div style={{display: 'flex', alignItems: 'flex-end', gap: 10}}>
-          {[260, 340, 220].map((h, i) => (
+          {[220, 290, 190].map((h, i) => (
             <div key={i} style={{width: 92, height: h, background: i === 1 ? C.ink : '#3B4163', border: `6px solid ${C.ink}`, borderRadius: '10px 10px 0 0', boxShadow: `6px 6px 0 ${C.ink}`, position: 'relative'}}>
               {new Array(Math.floor(h / 46)).fill(0).map((_, r) => (
                 <div key={r} style={{position: 'absolute', left: 14, right: 14, top: 18 + r * 40, height: 16, background: (r + i) % 3 ? C.gold : '#6F78A8', borderRadius: 3}} />
@@ -148,9 +148,9 @@ export const S7Close: React.FC = () => {
       {/* the open question */}
       <Pop at={question} x={1440} y={lerp(260, 420, lower)} f={f} rot={-2} out={flip + 10}>
         <Card style={{width: 700, padding: '24px 34px', opacity: 1 - lower * 0.85}}>
-          <Head size={56} style={{whiteSpace: 'normal', lineHeight: 1.05}}>
-            Can a student with a laptop compete with the <span style={{color: C.orange}}>big funds?</span>
-          </Head>
+          <div style={{fontFamily: SERIF, fontSize: 70, lineHeight: 1.02, color: C.ink}}>
+            Can a student with a laptop compete with the <span style={{fontStyle: 'italic', color: C.orange}}>big funds?</span>
+          </div>
         </Card>
       </Pop>
       <Pop at={board + 4} x={1600} y={720} from="right" f={f}>

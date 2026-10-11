@@ -18,18 +18,23 @@ const sfxEvents = (): Ev[] => {
   const e: Ev[] = [];
   const add = (at: number, name: string, gain = 1) => e.push({at: Math.round(at), name, gain});
 
-  // hook
-  add(0, 'whoosh', 0.7);
-  SCENES[0].voText.split(/\s+/).slice(0, 7).forEach((_, i) => add(sceneWords(SCENES[0])[i][0] * FPS - 2, 'tick', 0.45));
-  add(c('hook', 'coinLand', 0.25), 'impact', 1.2);
-  add(c('hook', 'coinLand', 0.25), 'clink', 0.9);
+  // hook: the cover
+  add(0, 'slide', 0.6);
+  SCENES[0].voText.split(/\s+/).slice(0, 8).forEach((_, i) => add(sceneWords(SCENES[0])[i][0] * FPS - 2, 'tick', 0.45));
+  add(sceneWords(SCENES[0])[2][0] * FPS + 2, 'pop_hi', 0.7); // Lucky peeks out of "AI"
+  add(sceneWords(SCENES[0])[7][0] * FPS + 2, 'pop', 0.7); // the human peeks out of "human?"
+  add(c('hook', 'sure') - 6, 'whoosh', 0.7);
+  add(c('hook', 'sure') + 4, 'slide', 0.8);
   add(c('hook', 'yes'), 'stamp', 1);
+  add(c('hook', 'yes'), 'ding', 0.6);
   add(c('hook', 'research'), 'rustle', 1);
   add(c('hook', 'research', 0.25), 'rustle', 0.7);
+  add(c('hook', 'research') + 4, 'boing', 0.6);
   add(c('hook', 'riser') - 6, 'riser', 0.9);
   add(c('hook', 'scratch'), 'scratch', 1.4);
-  add(c('hook', 'scratch', 0.2), 'whoosh', 1);
-  add(c('hook', 'luckyIn'), 'pop', 1);
+  add(c('hook', 'scratch') + 6, 'whoosh', 1);
+  add(c('hook', 'luckyIn') + 4, 'clink', 0.9);
+  add(c('hook', 'luckyIn') + 6, 'sparkle', 0.7);
   add(c('hook', 'title'), 'impact', 0.8);
   add(c('hook', 'title'), 'stamp', 0.7);
 

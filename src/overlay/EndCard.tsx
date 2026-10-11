@@ -4,7 +4,7 @@ import type {TransitionPresentation, TransitionPresentationComponentProps} from 
 import {sp} from '../anim';
 import {Lucky} from '../components/Lucky';
 import {Card, Coin3D, Head, Pill, Pop, stickerCut} from '../components/ui';
-import {C, MONO} from '../theme';
+import {C, MONO, SERIF} from '../theme';
 
 // End card + a custom @remotion/transitions presentation: the camera dives into
 // the frozen coin and its face opens onto the end card.
@@ -51,9 +51,9 @@ export const EndCard: React.FC<{belowAt: number}> = ({belowAt}) => {
               17 min read
             </Pill>
           </div>
-          <Head size={84} style={{textAlign: 'center', whiteSpace: 'normal'}}>
-            The Best Crypto Trading AI Might Just Be the <span style={{color: C.orange}}>Luckiest</span>
-          </Head>
+          <div style={{fontFamily: SERIF, fontSize: 104, lineHeight: 1, textAlign: 'center', color: C.ink}}>
+            The Best Crypto Trading AI Might Just Be the <span style={{fontStyle: 'italic', color: C.orange}}>Luckiest</span>
+          </div>
         </Card>
       </Pop>
       <Pop at={12} x={830} y={650} rot={-1.5} f={f}>

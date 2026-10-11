@@ -1,20 +1,12 @@
 # Focus video: come continuare su git / nel cloud
 
-Questo zip contiene tutto il progetto senza le parti che si rigenerano da sole:
+Questo repository contiene tutto il progetto senza le parti che si rigenerano da sole:
 `node_modules/` (npm install), `.venv/` (si crea con `npm run retime`), `out/` (render).
 
-## 1. Mettere il progetto su GitHub (repository privato)
+## 1. GitHub
 
-```bash
-cd focus-video
-git init
-git add .
-git commit -m "Focus video v2"
-gh repo create focus-video --private --source=. --push
-```
-
-Senza `gh`: crea un repository privato vuoto su github.com e poi
-`git remote add origin https://github.com/<tuo-utente>/focus-video.git` e `git push -u origin main`.
+Fatto: il progetto (prima era `focus-video-progetto.zip`) è estratto nella radice di questo repository.
+Si lavora su un branch e si apre una pull request verso `main`.
 
 ## 2. Prima di lavorare (locale o cloud)
 
@@ -23,22 +15,23 @@ npm install
 npx tsc --noEmit -p .
 ```
 
-Node 20+ e Python 3 con numpy. Il render usa Google Chrome se c'è (`remotion.config.ts`),
-altrimenti Remotion scarica il suo browser (serve accesso a remotion.media).
+Node 20+ e Python 3 con numpy. Il render usa Google Chrome se c'è, oppure la headless shell di Playwright nei
+container Linux (`remotion.config.ts`); altrimenti Remotion scarica il suo browser (serve accesso a remotion.media).
+I font sono già in `public/fonts`, quindi non serve accesso a Google Fonts.
 
-## 3. Cosa resta da fare (da dare alla sessione cloud)
+## 3. Stato
 
-Copia questo nella sessione:
+Fatto (sessione cloud dell'11 ottobre 2026):
+- progetto estratto dallo zip nella radice del repository; font self-hosted; render funzionante anche su Linux;
+- due giri di render completo + contact sheet a 4 fps, con correzioni di testi tagliati, zone vuote e momenti piatti;
+- identità "editorial pop" (serif per titoli e frasi, sans per interfaccia, mono per numeri e fonti) e nuova apertura
+  a copertina di rivista al posto dello schermo nero con la moneta; tolti ticker con numeri finti e decorazioni superflue;
+- fonti sullo schermo per ogni affermazione e slate finale `SOURCES`; capitoli con numeri romani in alto e sulla mappa;
+- didascalie senza parole orfane; render finale in `out/focus-video.mp4` (copia compressa in `video/`).
 
-> Progetto Remotion in questa repo (leggi README.md e ISTRUZIONI.md). Il brief completo è nella conversazione precedente.
-> Stato: il secondo render completo è stato rivisto; dopo ho già applicato nel codice altre correzioni (contenuti presenti
-> quando arriva la camera, folla di case prima della gara a barre, camera che entra nella moneta congelata, etichette che
-> non si sovrappongono). Da fare:
-> 1. `npm install`, poi `npm run render`, poi `./scripts/qa-sheets.sh` (4 fotogrammi al secondo in out/qa/).
-> 2. Rivedere i contact sheet contro il brief (zone vuote, testo illeggibile, momenti piatti), correggere, rifare il render.
-> 3. Se c'è `public/voiceover.m4a`: `npm run retime` e poi `npm run render`.
-> 4. Facoltativo: `npm run render:vertical`.
-> Mai inventare numeri: ogni cifra deve venire dall'articolo.
+Resta da fare solo la voce (sezione 4). Dopo `npm run retime` conviene rifare un controllo:
+`npm run render` e `./scripts/qa-sheets.sh` (4 fotogrammi al secondo in `out/qa/`). Mai inventare numeri: ogni cifra
+deve venire dall'articolo.
 
 ## 4. La voce
 

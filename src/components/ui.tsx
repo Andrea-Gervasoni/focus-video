@@ -2,7 +2,7 @@ import {evolvePath, getLength, getPointAtLength, getTangentAtLength} from '@remo
 import React from 'react';
 import {random, useCurrentFrame} from 'remotion';
 import {easeOut, ramp, sp, wobble} from '../anim';
-import {C, HEAD, MONO, SHADOW, STROKE} from '../theme';
+import {C, HEAD, MONO, SERIF, SHADOW, STROKE} from '../theme';
 
 // ---------- layout ----------
 
@@ -316,13 +316,15 @@ export const Kinetic: React.FC<{
   stagger?: number;
   f?: number;
   mono?: boolean;
+  serif?: boolean;
+  italic?: boolean;
   seed?: string;
   style?: React.CSSProperties;
-}> = ({text, at, size = 90, color = C.ink, mode = 'pop', stagger = 1.6, f: fo, mono, seed = 'k', style}) => {
+}> = ({text, at, size = 90, color = C.ink, mode = 'pop', stagger = 1.6, f: fo, mono, serif, italic, seed = 'k', style}) => {
   const frame = useCurrentFrame();
   const f = fo ?? frame;
   return (
-    <div style={{display: 'flex', fontFamily: mono ? MONO : HEAD, fontWeight: 800, fontSize: size, lineHeight: 1.05, letterSpacing: '-0.02em', color, whiteSpace: 'pre', ...style}}>
+    <div style={{display: 'flex', fontFamily: serif ? SERIF : mono ? MONO : HEAD, fontWeight: serif ? 400 : 800, fontStyle: italic ? 'italic' : 'normal', fontSize: size, lineHeight: 1.05, letterSpacing: serif ? '0' : '-0.02em', color, whiteSpace: 'pre', ...style}}>
       {text.split('').map((ch, i) => {
         const t0 = at + i * stagger;
         if (f < t0 - 2) return <span key={i} style={{opacity: 0}}>{ch}</span>;

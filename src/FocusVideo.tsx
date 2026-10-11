@@ -5,12 +5,11 @@ import {Soundtrack} from './audio/Soundtrack';
 import {camera, FLIP_COIN, STATIONS} from './camera';
 import {Captions} from './components/Captions';
 import {coinZoom, EndCard} from './overlay/EndCard';
-import {HookOverlay} from './overlay/HookOverlay';
 import {paperSlide, ReferencesSlate, SourceNotes} from './overlay/Sources';
 import {STORY_FRAMES, TOTAL_FRAMES} from './script';
 import {C, H, HEAD, MONO, SHADOW, STROKE, W} from './theme';
-import {cueAbs} from './timing';
-import {Grain, Ticker, World} from './world/World';
+import {cueAbs, getScene, sceneFrames} from './timing';
+import {ChapterHeader, Grain, World} from './world/World';
 
 const T = 18;
 /** end card -> reference slate */
@@ -25,10 +24,12 @@ const endTiming = () => {
   return {endAt, x: 960 + (wx - cam.x) * cam.z, y: 540 + (wy - cam.y) * cam.z, r: FLIP_COIN.r * cam.z};
 };
 
-const TickerLayer: React.FC<{endAt: number}> = ({endAt}) => {
+const HeaderLayer: React.FC<{endAt: number}> = ({endAt}) => {
   const f = useCurrentFrame();
-  const on = Math.min(1, Math.max(0, (f - (cueAbs('hook', 'scratch') + 12)) / 8)) * Math.min(1, Math.max(0, (endAt - f) / 6));
-  return <Ticker opacity={on} />;
+  // the opening has its own masthead; the chapter header takes over on the way to chapter II
+  const from = sceneFrames(getScene('who')).from - 10;
+  const on = Math.min(1, Math.max(0, (f - from) / 8)) * Math.min(1, Math.max(0, (endAt - f) / 6));
+  return <ChapterHeader opacity={on} />;
 };
 
 export const Stage: React.FC<{captions?: boolean}> = ({captions = true}) => {
@@ -49,8 +50,7 @@ export const Stage: React.FC<{captions?: boolean}> = ({captions = true}) => {
           <ReferencesSlate />
         </TransitionSeries.Sequence>
       </TransitionSeries>
-      <HookOverlay />
-      <TickerLayer endAt={endAt} />
+      <HeaderLayer endAt={endAt} />
       <Grain />
       {captions && <Captions />}
       {captions && <SourceNotes />}
@@ -85,9 +85,9 @@ export const FocusVideoVertical: React.FC = () => {
           <Stage captions={false} />
         </div>
       </div>
-      <Captions fontSize={60} maxWords={7} maxChars={36} bottom={590} maxWidth={960} wrap />
-      <SourceNotes left={60} bottom={300} size={26} maxWidth={960} wrap />
-      <div style={{position: 'absolute', bottom: 470, left: 0, right: 0, textAlign: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 38, color: C.ink}}>
+      <Captions fontSize={60} maxWords={7} maxChars={36} top={1250} maxWidth={960} wrap />
+      <SourceNotes left={60} bottom={150} size={26} maxWidth={960} wrap />
+      <div style={{position: 'absolute', top: 1500, left: 0, right: 0, textAlign: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 38, color: C.ink}}>
         Andrea Gervasoni · full article: link in bio
       </div>
       <Sequence from={STORY_FRAMES - T2} layout="none">

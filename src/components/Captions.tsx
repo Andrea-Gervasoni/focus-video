@@ -103,11 +103,12 @@ export const buildGroups = (maxWords: number, maxChars: number): Group[] => {
   });
 };
 
-export const Captions: React.FC<{fontSize?: number; maxWords?: number; maxChars?: number; bottom?: number; maxWidth?: number; wrap?: boolean; hideAfter?: number}> = ({
+export const Captions: React.FC<{fontSize?: number; maxWords?: number; maxChars?: number; bottom?: number; top?: number; maxWidth?: number; wrap?: boolean; hideAfter?: number}> = ({
   fontSize = 50,
   maxWords = 7,
   maxChars = 36,
   bottom = 74,
+  top,
   maxWidth = 1600,
   wrap = false,
   hideAfter,
@@ -131,7 +132,7 @@ export const Captions: React.FC<{fontSize?: number; maxWords?: number; maxChars?
   });
 
   return (
-    <div style={{position: 'absolute', left: 0, right: 0, bottom, display: 'flex', justifyContent: 'center', pointerEvents: 'none', zIndex: 100, opacity: fade}}>
+    <div style={{position: 'absolute', left: 0, right: 0, ...(top !== undefined ? {top} : {bottom}), display: 'flex', justifyContent: 'center', pointerEvents: 'none', zIndex: 100, opacity: fade}}>
       <div
         style={{
           display: 'flex',
