@@ -24,8 +24,9 @@ I font sono già in `public/fonts`, quindi non serve accesso a Google Fonts.
 Fatto (sessione cloud dell'11 ottobre 2026):
 - progetto estratto dallo zip nella radice del repository; font self-hosted; render funzionante anche su Linux;
 - due giri di render completo + contact sheet a 4 fps, con correzioni di testi tagliati, zone vuote e momenti piatti;
-- identità "editorial pop" (serif per titoli e frasi, sans per interfaccia, mono per numeri e fonti) e nuova apertura
-  a copertina di rivista al posto dello schermo nero con la moneta; tolti ticker con numeri finti e decorazioni superflue;
+- identità sartoriale con gli stessi colori: collage tipografico (Anton + Playfair Display Italic + Inter), filetti
+  sottili al posto dei contorni spessi, Lucky più elegante; nuova apertura a copertina di rivista; tolti ticker con
+  numeri finti e decorazioni superflue;
 - fonti sullo schermo per ogni affermazione e slate finale `SOURCES`; capitoli con numeri romani in alto e sulla mappa;
 - didascalie senza parole orfane; render finale in `out/focus-video.mp4` (copia compressa in `video/`).
 

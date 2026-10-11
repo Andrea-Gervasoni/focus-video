@@ -42,26 +42,35 @@ Per tornare all'anteprima muta con i tempi stimati: `npm run retime -- --reset` 
 - **Audio**: tutto generato con numpy (`scripts/gen_sfx.py`): whoosh, impatti, riser, clink FM, scratch, sgonfiamento,
   leva e rulli, vapore e un beat a 100 bpm a −24 dB che si abbassa sotto la voce.
 
-## Identità visiva: "editorial pop"
+## Identità visiva: sartoriale, stessi colori
 
-Una rivista elegante con illustrazioni pop: carta avorio, inchiostro, tre accenti (blu, arancio, oro), la mascotte
-Lucky e animazioni con molle, fisica e whip pan; sopra, una tipografia editoriale sobria.
+Una rivista di moda più che un template: la tipografia è la grafica. Palette invariata (carta crema, inchiostro,
+blu, arancio, oro); la personalità animata resta (Lucky, molle, fisica, whip pan), ma con un tratto più fine.
 
-- **Tipografia** (`src/theme.ts`, font in `public/fonts`, tutti OFL): `SERIF` (Instrument Serif, tondo e corsivo) per
-  titoli e frasi chiave; `HEAD` (Bricolage Grotesque) per etichette, schede e didascalie; `MONO` (JetBrains Mono) per
-  numeri, codice e fonti. Il corsivo colorato evidenzia la parola che conta (*AI*, *human?*, *Luckiest*, *risk*).
-- **Apertura**: una copertina con cornice a filetto doppio. La domanda arriva in serif; la curva dorata (il vincitore
-  vero della simulazione) sale mentre Lucky la cavalca, "Yes." diventa "Yes?", e su "changed my mind" c'è un fermo
-  immagine. La camera si allarga sulle 1.000 curve di puro rumore: il migliore era solo il più fortunato.
-- **Capitoli**: in alto a sinistra numero romano + titolo del capitolo, con un filetto che si riempie d'oro
-  lungo la storia; nella vista a mappa ogni stazione mostra il suo capitolo (`src/world/World.tsx`).
+- **Tipografia** (`src/theme.ts`, font in `public/fonts`, tutti OFL): `DISPLAY` (Anton) per le parole che colpiscono,
+  in maiuscolo condensato gigante; `SCRIPT` (Playfair Display Italic) per la voce che le accompagna; `SANS` (Inter)
+  per etichette in maiuscoletto spaziato, didascalie e fonti; `MONO` (JetBrains Mono) solo per il codice.
+- **Collage**: le frasi chiave sono composte come una copertina, corsivo sopra maiuscole giganti
+  (*Can an* **AI** *trade better than a* **HUMAN?**, *I was sure the answer was* **YES.**, **LUCKIEST**,
+  **QUANTS WARN**, **GENIUS?** barrato → *just* **LUCKY.**, *Sharpe =* **RETURNS / RISK**, **EVEN WORSE.**,
+  **FIX.**, **BIG FUNDS?**). Componenti `Display`, `Script`, `Label`, `Rise` in `src/components/ui.tsx`.
+- **Tratto**: filetti d'inchiostro da 2 px, angoli quasi vivi, ombra morbida (`HAIR`, `LIFT`) al posto dei contorni
+  spessi e delle ombre piene; la carta ha un gessato finissimo nello stesso crema. La penna rossa (arancio) barra e
+  sottolinea come un editor.
+- **Lucky** resta, più elegante: linee sottili, niente contorno adesivo, papillon al posto dei tre bottoni.
+- **Apertura**: copertina con cornice a doppio filetto; la domanda in collage, la curva dorata (il vincitore vero
+  della simulazione) che Lucky cavalca, YES. → YES?, fermo immagine su "changed my mind", poi le 1.000 curve di puro
+  rumore e il titolo **LUCKIEST**.
+- **Capitoli**: in alto a sinistra numero romano in corsivo + nome del capitolo in maiuscolo, con un filetto d'oro
+  che avanza; nella vista a mappa ogni stazione mostra il suo capitolo (`src/world/World.tsx`).
 - **Fonti**: sempre nello stesso punto, in basso a sinistra sotto le didascalie, con etichetta `SOURCE`, `METHOD` o `MATH`;
-  il video chiude con lo slate `SOURCES` con le otto fonti dell'articolo e a cosa sono servite. Tutto in
-  `src/overlay/Sources.tsx` (`NOTES` per le note, `REFERENCES` per lo slate). La durata dello slate è `OUTRO_SECONDS`
-  in `src/script.ts` e non viene toccata da `npm run retime`.
-- **Niente rumore**: nessun dato finto (via il ticker con percentuali inventate), niente decorazioni che non c'entrano;
-  tra le stazioni resta solo il tratteggio del percorso della storia.
-- **Didascalie**: divise per frase e per inciso, righe bilanciate, mai una parola da sola se non è una pausa voluta.
+  il video chiude con lo slate **SOURCES** con le otto fonti dell'articolo e a cosa sono servite
+  (`src/overlay/Sources.tsx`: `NOTES` e `REFERENCES`). La durata dello slate è `OUTRO_SECONDS` in `src/script.ts`
+  e non viene toccata da `npm run retime`.
+- **Niente rumore**: nessun dato finto, niente decorazioni che non c'entrano; tra le stazioni resta solo il tratteggio
+  del percorso della storia.
+- **Didascalie**: striscia di carta pulita, parola attiva sottolineata in blu, numeri in Anton; divise per frase e per
+  inciso, mai una parola da sola se non è una pausa voluta.
 
 ## QA
 
