@@ -3,9 +3,9 @@ import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {clamp01, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Pill, Pop, Sqrt, stickerCut} from '../components/ui';
+import {Display, Label, Pill, Pop, Rise, Script, Sqrt, stickerCut} from '../components/ui';
 import {SceneId} from '../script';
-import {C, HEAD, MONO, SERIF, STROKE} from '../theme';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 import {cueAbs, getScene, sceneFrames} from '../timing';
 
 // Every claim on screen carries its source in one fixed place (bottom left, under
@@ -118,16 +118,16 @@ export const SourceNotes: React.FC<{left?: number; bottom?: number; size?: numbe
           alignItems: 'stretch',
           maxWidth,
           background: C.paper,
-          border: `3px solid ${C.ink}`,
-          borderRadius: size * 0.5,
-          boxShadow: `3px 3px 0 ${C.ink}`,
+          border: `${HAIR}px solid ${C.ink}`,
+          borderRadius: 3,
+          boxShadow: LIFT,
           overflow: 'hidden',
         }}
       >
-        <div style={{background: LABEL_BG[cur.label], color: C.white, fontFamily: MONO, fontWeight: 800, fontSize: size * 0.85, letterSpacing: '0.08em', padding: `${size * 0.22}px ${size * 0.55}px`, display: 'flex', alignItems: 'center'}}>
+        <div style={{background: LABEL_BG[cur.label], color: C.white, fontFamily: SANS, fontWeight: 800, fontSize: size * 0.72, letterSpacing: '0.18em', padding: `${size * 0.3}px ${size * 0.6}px`, display: 'flex', alignItems: 'center'}}>
           {cur.label}
         </div>
-        <div style={{fontFamily: MONO, fontWeight: 700, fontSize: size, color: C.ink, padding: `${size * 0.22}px ${size * 0.6}px`, whiteSpace: wrap ? 'normal' : 'nowrap', lineHeight: 1.3, opacity: prev ? clamp01((f - cur.a) / 5) : 1}}>
+        <div style={{fontFamily: SANS, fontWeight: 500, fontSize: size, color: C.ink, padding: `${size * 0.3}px ${size * 0.65}px`, whiteSpace: wrap ? 'normal' : 'nowrap', lineHeight: 1.3, opacity: prev ? clamp01((f - cur.a) / 5) : 1}}>
           {cur.text}
         </div>
       </div>
@@ -145,9 +145,9 @@ const RefCard: React.FC<{r: Reference; w: number}> = ({r, w}) => (
       display: 'flex',
       gap: 18,
       background: C.paper,
-      border: `${STROKE - 1}px solid ${C.ink}`,
-      borderRadius: 22,
-      boxShadow: `5px 5px 0 ${C.ink}`,
+      border: `${HAIR}px solid ${C.ink}`,
+      borderRadius: 4,
+      boxShadow: LIFT,
       padding: '14px 22px 14px 16px',
       boxSizing: 'border-box',
     }}
@@ -157,13 +157,11 @@ const RefCard: React.FC<{r: Reference; w: number}> = ({r, w}) => (
         flex: '0 0 auto',
         width: 52,
         height: 52,
-        borderRadius: 99,
+        borderRadius: 2,
         background: r.id === 8 ? C.orange : C.blue,
-        border: `4px solid ${C.ink}`,
         color: C.white,
-        fontFamily: MONO,
-        fontWeight: 800,
-        fontSize: 26,
+        fontFamily: DISPLAY,
+        fontSize: 32,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -174,11 +172,11 @@ const RefCard: React.FC<{r: Reference; w: number}> = ({r, w}) => (
     </div>
     <div style={{display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, flex: 1}}>
       <div style={{display: 'flex', alignItems: 'baseline', gap: 12, whiteSpace: 'nowrap'}}>
-        <span style={{fontFamily: SERIF, fontSize: 38, lineHeight: 1, color: C.ink}}>{r.short}</span>
+        <span style={{fontFamily: SCRIPT, fontStyle: 'italic', fontWeight: 700, fontSize: 38, lineHeight: 1, color: C.ink}}>{r.short}</span>
       </div>
-      <div style={{fontFamily: HEAD, fontWeight: 700, fontSize: 21, lineHeight: 1.18, color: C.ink, height: 52, overflow: 'hidden'}}>{r.title}</div>
-      <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 16, color: '#6E6757', whiteSpace: 'nowrap', overflow: 'hidden'}}>{r.venue}</div>
-      <div style={{fontFamily: MONO, fontWeight: 800, fontSize: 16, color: C.orange, whiteSpace: 'nowrap', overflow: 'hidden'}}>→ {r.used}</div>
+      <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 21, lineHeight: 1.18, color: C.ink, height: 52, overflow: 'hidden'}}>{r.title}</div>
+      <div style={{fontFamily: SANS, fontWeight: 500, fontSize: 16, color: '#6E6757', whiteSpace: 'nowrap', overflow: 'hidden'}}>{r.venue}</div>
+      <div style={{fontFamily: SANS, fontWeight: 800, fontSize: 15, letterSpacing: '0.04em', color: C.orange, whiteSpace: 'nowrap', overflow: 'hidden'}}>→ {r.used}</div>
     </div>
   </div>
 );
@@ -190,18 +188,19 @@ export const ReferencesSlate: React.FC<{tall?: boolean}> = ({tall = false}) => {
   const GAP_X = 32;
   const x0 = (1920 - (2 * W + GAP_X)) / 2;
   return (
-    <AbsoluteFill style={{background: C.cream, backgroundImage: `radial-gradient(${C.creamDark} 2.6px, transparent 2.9px)`, backgroundSize: '46px 46px', backgroundPosition: `${f * 0.4}px ${f * 0.25}px`}}>
+    <AbsoluteFill style={{background: C.cream}}>
+      <AbsoluteFill style={{backgroundImage: `repeating-linear-gradient(90deg, ${C.creamDark} 0px, ${C.creamDark} 1.6px, transparent 1.6px, transparent 34px)`, backgroundPosition: `${f * 0.3}px 0px`, opacity: 0.55}} />
       <AbsoluteFill style={{transform: `scale(${1 + Math.min(f, 240) * 0.00012})`}}>
-        <Pop at={2} x={x0 + 150} y={118} from="up" f={f} dist={300}>
-          <Pill bg={C.ink} color={C.white} size={40}>
-            SOURCES
-          </Pill>
-        </Pop>
-        <Pop at={5} x={x0 + 300} y={118} f={f} style={{transform: 'translate(0, -50%)'}}>
-          <div style={{fontFamily: SERIF, fontSize: 50, color: C.ink, whiteSpace: 'nowrap'}}>
-            Every number on screen comes from the article and <i>the work it cites.</i>
+        <div style={{position: 'absolute', left: x0, top: 70, display: 'flex', alignItems: 'baseline', gap: 30}}>
+          <div style={{transform: `scale(${2 - sp(f, 2, {damping: 12, stiffness: 230, mass: 0.7})})`, transformOrigin: '0% 80%', opacity: f >= 2 ? 1 : 0}}>
+            <Display size={120} color={C.blue}>
+              Sources
+            </Display>
           </div>
-        </Pop>
+          <Rise at={6} f={f}>
+            <Script size={40}>Every number on screen comes from the article and the work it cites.</Script>
+          </Rise>
+        </div>
         {REFERENCES.map((r, i) => {
           const col = i < 4 ? 0 : 1;
           const row = i % 4;
@@ -212,7 +211,7 @@ export const ReferencesSlate: React.FC<{tall?: boolean}> = ({tall = false}) => {
           );
         })}
         <Pop at={30} x={960} y={1010} f={f}>
-          <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 22, color: '#6E6757', whiteSpace: 'nowrap'}}>
+          <div style={{fontFamily: SANS, fontWeight: 700, fontSize: 18, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#6E6757', whiteSpace: 'nowrap'}}>
             Andrea Gervasoni · TKS Focus: Blockchain · full article linked below
           </div>
         </Pop>
@@ -235,7 +234,7 @@ const ReferencesTall: React.FC<{f: number}> = ({f}) => (
       </Pill>
     </Pop>
     <Pop at={5} x={540} y={250} f={f}>
-      <div style={{fontFamily: SERIF, fontSize: 52, color: C.ink, textAlign: 'center', width: 960, lineHeight: 1.05}}>
+      <div style={{fontFamily: SCRIPT, fontStyle: 'italic', fontWeight: 700, fontSize: 52, color: C.ink, textAlign: 'center', width: 960, lineHeight: 1.05}}>
         Every number on screen comes from the article and <i>the work it cites.</i>
       </div>
     </Pop>

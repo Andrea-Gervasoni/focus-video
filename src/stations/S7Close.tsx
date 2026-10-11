@@ -3,8 +3,8 @@ import {AbsoluteFill} from 'remotion';
 import {clamp01, lerp, ramp, sp} from '../anim';
 import {FLIP_COIN} from '../camera';
 import {Lucky} from '../components/Lucky';
-import {Annotate, Card, Coin3D, Head, Pill, Pop, stickerCut} from '../components/ui';
-import {C, HEAD, SERIF} from '../theme';
+import {Annotate, Card, Coin3D, Display, Label, Pill, Pop, Rise, Script, stickerCut} from '../components/ui';
+import {C, DISPLAY, HAIR, LIFT, SANS, SCRIPT} from '../theme';
 import {useScene} from '../timing';
 
 // Names only, no logos: four who tried, as polaroids on a detective board.
@@ -17,7 +17,7 @@ const POLAROIDS = [
 
 const Icon: React.FC<{kind: string}> = ({kind}) => (
   <svg width={140} height={110} viewBox="0 0 140 110">
-    <g stroke={C.ink} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill={C.paper}>
+    <g stroke={C.ink} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill={C.paper}>
       {kind === 'bars' && [0, 1, 2, 3].map((i) => <rect key={i} x={18 + i * 28} y={86 - (i + 1) * 17} width={20} height={(i + 1) * 17} />)}
       {kind === 'net' && (
         <>
@@ -77,12 +77,11 @@ export const S7Close: React.FC = () => {
             style={{
               width: 1200,
               height: 660,
-              background: '#D6B07C',
-              backgroundImage: 'radial-gradient(#B98E57 2px, transparent 2.5px)',
-              backgroundSize: '22px 22px',
-              border: `8px solid ${C.ink}`,
-              borderRadius: 26,
-              boxShadow: `8px 8px 0 ${C.ink}`,
+              background: C.creamDark,
+              backgroundImage: `repeating-linear-gradient(90deg, rgba(255,252,244,0.55) 0px, rgba(255,252,244,0.55) 2px, transparent 2px, transparent 26px)`,
+              border: `${HAIR}px solid ${C.ink}`,
+              borderRadius: 4,
+              boxShadow: LIFT,
               boxSizing: 'border-box',
             }}
           />
@@ -103,36 +102,40 @@ export const S7Close: React.FC = () => {
           return (
             <Pop key={p.name} at={at} x={p.x} y={p.y + 70} from={i % 2 ? 'right' : 'left'} rot={p.rot} f={f} dist={900}>
               <div style={{transform: `scale(${1 + hl * 0.12})`, position: 'relative'}}>
-                <div style={{width: 250, padding: '16px 16px 18px', background: C.white, border: `5px solid ${C.ink}`, boxShadow: `6px 6px 0 ${C.ink}`, boxSizing: 'border-box'}}>
-                  <div style={{height: 150, background: p.bg, border: `4px solid ${C.ink}`, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <div style={{width: 250, padding: '16px 16px 18px', background: C.white, border: `${HAIR}px solid ${C.ink}`, boxShadow: LIFT, boxSizing: 'border-box'}}>
+                  <div style={{height: 150, background: p.bg, border: `${HAIR}px solid ${C.ink}`, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                     <Icon kind={p.icon} />
                   </div>
-                  <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 32, textAlign: 'center', marginTop: 10, whiteSpace: 'nowrap'}}>{p.name}</div>
+                  <Script size={38} style={{textAlign: 'center', marginTop: 10}}>
+                    {p.name}
+                  </Script>
                 </div>
-                <div style={{position: 'absolute', left: 109, top: -14, width: 32, height: 32, borderRadius: 99, background: '#D22B2B', border: `5px solid ${C.ink}`}} />
+                <div style={{position: 'absolute', left: 109, top: -14, width: 32, height: 32, borderRadius: 99, background: '#D22B2B', border: `${HAIR}px solid ${C.ink}`}} />
                 {hl > 0.05 && <div style={{position: 'absolute', inset: -18, border: `8px solid ${C.orange}`, borderRadius: 30, opacity: clamp01(hl * 1.5)}} />}
               </div>
             </Pop>
           );
         })}
         <Pop at={board + 16} x={1130} y={640} rot={-5} f={f}>
-          <div style={{background: C.gold, border: `5px solid ${C.ink}`, padding: '10px 22px', fontFamily: HEAD, fontWeight: 800, fontSize: 34, boxShadow: `5px 5px 0 ${C.ink}`}}>who actually tried</div>
+          <Pill bg={C.gold} size={40}>
+            Who actually tried
+          </Pill>
         </Pop>
       </div>
 
       {/* a laptop vs the big funds */}
       <Pop at={student + 4} x={1350} y={640} rot={-8} f={f} out={flip}>
         <svg width={170} height={120} viewBox="0 0 170 120">
-          <rect x={25} y={8} width={120} height={80} rx={8} fill={C.paper} stroke={C.ink} strokeWidth={7} />
+          <rect x={25} y={8} width={120} height={80} rx={8} fill={C.paper} stroke={C.ink} strokeWidth={3} />
           <rect x={38} y={20} width={94} height={56} rx={4} fill={C.blueSoft} />
           <path d="M44 62 L64 46 L80 54 L104 32 L124 40" stroke={C.blue} strokeWidth={6} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M6 96 L164 96 L150 112 L20 112 Z" fill={C.greyLight} stroke={C.ink} strokeWidth={7} strokeLinejoin="round" />
+          <path d="M6 96 L164 96 L150 112 L20 112 Z" fill={C.greyLight} stroke={C.ink} strokeWidth={3} strokeLinejoin="round" />
         </svg>
       </Pop>
       <Pop at={compete + 2} x={1110} y={680} from="down" f={f} out={flip}>
         <div style={{display: 'flex', alignItems: 'flex-end', gap: 10}}>
           {[220, 290, 190].map((h, i) => (
-            <div key={i} style={{width: 92, height: h, background: i === 1 ? C.ink : '#3B4163', border: `6px solid ${C.ink}`, borderRadius: '10px 10px 0 0', boxShadow: `6px 6px 0 ${C.ink}`, position: 'relative'}}>
+            <div key={i} style={{width: 92, height: h, background: i === 1 ? C.ink : '#3B4163', border: `${HAIR}px solid ${C.ink}`, borderRadius: '10px 10px 0 0', boxShadow: LIFT, position: 'relative'}}>
               {new Array(Math.floor(h / 46)).fill(0).map((_, r) => (
                 <div key={r} style={{position: 'absolute', left: 14, right: 14, top: 18 + r * 40, height: 16, background: (r + i) % 3 ? C.gold : '#6F78A8', borderRadius: 3}} />
               ))}
@@ -147,11 +150,14 @@ export const S7Close: React.FC = () => {
       </Pop>
       {/* the open question */}
       <Pop at={question} x={1440} y={lerp(260, 420, lower)} f={f} rot={-2} out={flip + 10}>
-        <Card style={{width: 700, padding: '24px 34px', opacity: 1 - lower * 0.85}}>
-          <div style={{fontFamily: SERIF, fontSize: 70, lineHeight: 1.02, color: C.ink}}>
-            Can a student with a laptop compete with the <span style={{fontStyle: 'italic', color: C.orange}}>big funds?</span>
-          </div>
-        </Card>
+        <div style={{width: 760, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', opacity: 1 - lower * 0.85}}>
+          <Script size={62} style={{whiteSpace: 'normal', lineHeight: 1.05}}>
+            Can a student with a laptop compete with the
+          </Script>
+          <Display size={170} color={C.orange} style={{marginTop: 6}}>
+            Big funds?
+          </Display>
+        </div>
       </Pop>
       <Pop at={board + 4} x={1600} y={720} from="right" f={f}>
         <div style={{...stickerCut(5), ...(dof > 0.01 ? {filter: `${stickerCut(5).filter} blur(${dof * 5}px)`} : {})}}>
@@ -177,7 +183,7 @@ export const S7Close: React.FC = () => {
       )}
       {frozen && (
         <Pop at={flip + T_APEX + 4} x={FLIP_COIN.apex.x} y={FLIP_COIN.apex.y + 150} f={f}>
-          <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 40, color: C.ink, background: C.paper, border: `4px solid ${C.ink}`, borderRadius: 999, padding: '4px 22px'}}>…?</div>
+          <Script size={64}>…?</Script>
         </Pop>
       )}
     </AbsoluteFill>

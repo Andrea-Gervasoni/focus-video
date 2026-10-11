@@ -3,10 +3,10 @@ import {AbsoluteFill, Easing, random} from 'remotion';
 import {bouncy, clamp01, easeOut, ramp, sp} from '../anim';
 import {CURVE_LOCAL} from '../camera';
 import {CrownIcon, Lucky, LUCKY_FEET} from '../components/Lucky';
-import {Annotate, At, Card, DefCard, Head, Num, Odometer, Pill, Pop, Stamp, stickerCut} from '../components/ui';
+import {Annotate, At, Card, DefCard, Display, Label, Num, Odometer, Pill, Pop, Rise, Script, Stamp, stickerCut} from '../components/ui';
 import {crownTrack, sample} from '../sim/physics';
 import {sim} from '../sim/curves';
-import {C, HEAD, MONO, SERIF} from '../theme';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 import {useScene} from '../timing';
 
 // plot geometry (station px): in-sample 730 days, then the unseen year at the same scale
@@ -159,18 +159,20 @@ const SharpeExplainer: React.FC<{f: number; sharpe: number; divided: number; ris
     <>
       <Pop at={sharpe} x={960} y={400} f={f} out={out} outTo="up">
         <Card style={{width: 1180, padding: '30px 56px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18}}>
-          <Pill bg={C.blue} color={C.white} size={34}>
-            SHARPE RATIO
-          </Pill>
+          <Label size={22} color={C.blue}>
+            The Sharpe ratio
+          </Label>
           <div style={{display: 'flex', alignItems: 'center', gap: 34}}>
-            <span style={{fontFamily: SERIF, fontSize: 130, lineHeight: 1}}>Sharpe =</span>
+            <Script size={130}>Sharpe =</Script>
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 400}}>
               <div style={{opacity: f >= divided - 4 ? 1 : 0, transform: `translateY(${(1 - sp(f, divided - 4, {damping: 10, stiffness: 220})) * 40}px)`}}>
-                <span style={{fontFamily: SERIF, fontSize: 116, lineHeight: 1}}>returns</span>
+                <Display size={130}>Returns</Display>
               </div>
-              <div style={{width: 420 * bar, height: 12, background: C.ink, borderRadius: 6, margin: '10px 0'}} />
+              <div style={{width: 420 * bar, height: 6, background: C.ink, margin: '14px 0'}} />
               <div style={{opacity: f >= risk - 2 ? 1 : 0, transform: `translateY(${(1 - sp(f, risk - 2, {damping: 10, stiffness: 220})) * -40}px)`}}>
-                <span style={{fontFamily: SERIF, fontStyle: 'italic', fontSize: 116, lineHeight: 1, color: C.orange}}>risk</span>
+                <Display size={130} color={C.orange}>
+                  Risk
+                </Display>
               </div>
             </div>
           </div>
@@ -178,9 +180,9 @@ const SharpeExplainer: React.FC<{f: number; sharpe: number; divided: number; ris
       </Pop>
       <Pop at={above2 - 4} x={960} y={790} from="down" f={f} out={out + 2} outTo="down">
         <div style={{position: 'relative', width: RW + 120, height: 150}}>
-          <div style={{position: 'absolute', left: 60, top: 50, width: RW, height: 46, borderRadius: 23, border: `5px solid ${C.ink}`, background: C.paper, overflow: 'hidden', boxSizing: 'border-box', boxShadow: `5px 5px 0 ${C.ink}`}}>
+          <div style={{position: 'absolute', left: 60, top: 50, width: RW, height: 46, borderRadius: 23, border: `${HAIR}px solid ${C.ink}`, background: C.paper, overflow: 'hidden', boxSizing: 'border-box', boxShadow: LIFT}}>
             <div style={{position: 'absolute', left: `${(2 / 3) * 100}%`, top: 0, bottom: 0, width: `${(1 / 3) * 100 * zone}%`, background: C.blue}} />
-            <div style={{position: 'absolute', left: `${(2 / 3) * 100}%`, top: 0, bottom: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 26, color: C.white, opacity: zone}}>
+            <div style={{position: 'absolute', left: `${(2 / 3) * 100}%`, top: 0, bottom: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontWeight: 800, fontSize: 26, color: C.white, opacity: zone}}>
               excellent
             </div>
           </div>
@@ -192,7 +194,7 @@ const SharpeExplainer: React.FC<{f: number; sharpe: number; divided: number; ris
           {/* the marker slides from 0 to 2 */}
           <div style={{position: 'absolute', left: 60 + (2 / 3) * RW * marker - 18, top: 4}}>
             <svg width={36} height={40} viewBox="0 0 36 40">
-              <path d="M4 4 L32 4 L18 34 Z" fill={C.orange} stroke={C.ink} strokeWidth={5} strokeLinejoin="round" />
+              <path d="M4 4 L32 4 L18 34 Z" fill={C.orange} stroke={C.ink} strokeWidth={3} strokeLinejoin="round" />
             </svg>
           </div>
         </div>
@@ -251,14 +253,17 @@ export const S4Sim: React.FC = () => {
   return (
     <AbsoluteFill>
       {/* ---- the experiment ---- */}
-      <Pop at={tested - 10} x={560} y={110} from="up" out={expOut} outTo="up" f={f}>
-        <div style={{fontFamily: SERIF, fontSize: 96, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
-          So I <i style={{color: C.blue}}>tested it.</i>
+      <Pop at={tested - 10} x={560} y={96} from="up" out={expOut} outTo="up" f={f}>
+        <div style={{display: 'flex', alignItems: 'baseline', gap: 22}}>
+          <Script size={90}>So I</Script>
+          <Display size={150} color={C.blue}>
+            Tested it.
+          </Display>
         </div>
       </Pop>
       <Pop at={tested - 8} x={560} y={340} from="down" out={expOut} outTo="up" rot={-1.5} f={f}>
         <Card bg={C.ink} style={{width: 900, padding: 0, overflow: 'hidden'}}>
-          <div style={{display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: `4px solid #2C2C2C`}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: `1px solid #2C2C2C`}}>
             {[C.orange, C.gold, C.blue].map((c) => (
               <div key={c} style={{width: 18, height: 18, borderRadius: 99, background: c}} />
             ))}
@@ -309,16 +314,21 @@ export const S4Sim: React.FC = () => {
 
       {/* ---- the chart: 1,000 random walks + towers ---- */}
       <Pop at={chartIn} x={980} y={470} f={f}>
-        <div style={{width: 1720, height: 680, background: C.paper, border: `5px solid ${C.ink}`, borderRadius: 30, boxShadow: `6px 6px 0 ${C.ink}`}} />
+        <div style={{width: 1720, height: 680, background: C.paper, border: `${HAIR}px solid ${C.ink}`, borderRadius: 30, boxShadow: LIFT}} />
       </Pop>
       {f >= chartIn + 4 && (
         <>
           <div style={{position: 'absolute', left: PX0, top: ZERO_Y, width: PX2 - PX0, height: 3, background: C.greyLight}} />
           <div style={{position: 'absolute', left: PX0 - 14, top: 150, display: 'flex', flexDirection: 'column', gap: 2, opacity: shown > 0 ? (1 - ramp(f, v23 - 12, v23)) + ramp(f, collapse + 24, collapse + 36) : 0}}>
-            <div style={{fontFamily: SERIF, fontSize: 52, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
-              <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 40, color: C.blue}}>{shown.toLocaleString('en-US')}</span> strategies of <i>pure noise</i>
+            <div style={{display: 'flex', alignItems: 'baseline', gap: 14}}>
+              <Display size={64} color={C.blue}>
+                {shown.toLocaleString('en-US')}
+              </Display>
+              <Script size={50}>strategies of pure noise</Script>
             </div>
-            <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 20, color: '#6E6757', whiteSpace: 'nowrap'}}>cumulative return · 2 years of daily data</div>
+            <Label size={16} color="#6E6757">
+              Cumulative return · 2 years of daily data
+            </Label>
           </div>
           <div style={{position: 'absolute', left: PX0 - 44, top: ZERO_Y - 14, fontFamily: MONO, fontWeight: 800, fontSize: 22, color: '#6E6757'}}>0</div>
           <Curves f={f} shown={shown} draw={draw} deflate={deflate} unseen={unseenDraw} glow={glow} />
@@ -328,7 +338,7 @@ export const S4Sim: React.FC = () => {
       {f >= unseen && (
         <>
           <svg width={20} height={620} style={{position: 'absolute', left: PX1 - 10, top: 160, overflow: 'visible'}}>
-            <line x1={10} x2={10} y1={0} y2={600 * ramp(f, unseen, unseen + 12, easeOut)} stroke={C.ink} strokeWidth={6} strokeDasharray="18 14" strokeLinecap="round" />
+            <line x1={10} x2={10} y1={0} y2={600 * ramp(f, unseen, unseen + 12, easeOut)} stroke={C.ink} strokeWidth={3} strokeDasharray="18 14" strokeLinecap="round" />
           </svg>
           <Pop at={unseen + 4} x={(PX1 + PX2) / 2 + 20} y={ZERO_Y + 40} f={f} out={collapse}>
             <Pill bg={C.paper} color={C.orange} size={36}>
@@ -360,10 +370,10 @@ export const S4Sim: React.FC = () => {
                 width: 160,
                 height: h,
                 background: `repeating-linear-gradient(0deg, ${C.blue} 0 46px, #1A33DD 46px 50px)`,
-                border: `5px solid ${C.ink}`,
+                border: `${HAIR}px solid ${C.ink}`,
                 borderBottom: 'none',
                 borderRadius: '18px 18px 0 0',
-                boxShadow: `6px 0 0 ${C.ink}`,
+                boxShadow: LIFT,
                 boxSizing: 'border-box',
               }}
             >
@@ -374,7 +384,11 @@ export const S4Sim: React.FC = () => {
               </div>
             </div>
             <At x={t.x} y={BASE + 40}>
-              <div style={{background: C.ink, color: C.white, fontFamily: MONO, fontWeight: 800, fontSize: 24, padding: '4px 12px', borderRadius: 10, whiteSpace: 'nowrap'}}>best of {t.n}</div>
+              <div style={{background: C.ink, color: C.paper, padding: '6px 14px 5px', borderRadius: 2}}>
+                <Label size={17} color={C.paper}>
+                  Best of {t.n}
+                </Label>
+              </div>
             </At>
             <div style={{position: 'absolute', left: t.x - (t.size * 300) / 300 / 2, top: BASE - h - t.size * LUCKY_FEET + 6, ...stickerCut(4)}}>
               <Lucky
@@ -406,8 +420,8 @@ export const S4Sim: React.FC = () => {
       {f >= b1000 && (
         <Pop at={b1000 + 2} x={ODO.x} y={ODO.y} f={f}>
           <Card style={{padding: '10px 26px', display: 'flex', alignItems: 'center', gap: 16, background: f >= collapse ? C.paper : C.gold}}>
-            <span style={{fontFamily: HEAD, fontWeight: 800, fontSize: 30}}>Sharpe</span>
-            {f >= collapse + 20 && <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 70}}>≈</span>}
+            <Script size={40}>Sharpe</Script>
+            {f >= collapse + 20 && <Display size={78}>≈</Display>}
             <Odometer value={odo} size={78} />
           </Card>
         </Pop>
@@ -415,7 +429,11 @@ export const S4Sim: React.FC = () => {
       {frozen && <div style={{position: 'absolute', inset: -400, background: 'rgba(30,30,40,0.08)'}} />}
       {f >= neverSeen && deflate <= 0 && (
         <Pop at={neverSeen} x={1590} y={100} rot={-4} f={f}>
-          <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 30, color: C.goldDark, background: C.paper, border: `3px dashed ${C.goldDark}`, borderRadius: 14, padding: '4px 14px'}}>if it were skill</div>
+          <div style={{background: C.paper, border: `2px dashed ${C.goldDark}`, borderRadius: 2, padding: '4px 16px 6px'}}>
+            <Script size={38} color={C.goldDark}>
+              if it were skill
+            </Script>
+          </div>
         </Pop>
       )}
       {/* air puffs escaping the golden curve */}
@@ -426,11 +444,11 @@ export const S4Sim: React.FC = () => {
           const px = PX0 + 380 + k * 80 + Math.sin(t / 3 + k) * 12;
           const py = CURVE_LOCAL.y + 140 - k * 14 - t * 5;
           const r = 10 + t * 1.3;
-          return <div key={k} style={{position: 'absolute', left: px - r, top: py - r, width: r * 2, height: r * 2, borderRadius: '50%', border: `4px solid ${C.ink}`, background: C.paper, opacity: 1 - t / 30}} />;
+          return <div key={k} style={{position: 'absolute', left: px - r, top: py - r, width: r * 2, height: r * 2, borderRadius: '50%', border: `${HAIR}px solid ${C.ink}`, background: C.paper, opacity: 1 - t / 30}} />;
         })}
       {f >= collapse + 2 && (
         <Pop at={collapse + 2} x={CURVE_LOCAL.x - 160} y={CURVE_LOCAL.y - 40} rot={-10} f={f} out={collapse + 34}>
-          <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 110, color: C.paper, WebkitTextStroke: `5px ${C.ink}`, letterSpacing: '-0.02em'}}>pfff…</div>
+          <Script size={130}>pfff…</Script>
         </Pop>
       )}
       <Annotate

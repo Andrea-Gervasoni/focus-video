@@ -3,8 +3,8 @@ import {AbsoluteFill, Easing, random} from 'remotion';
 import {bouncy, clamp01, lerp, ramp, sp} from '../anim';
 import {NEST, STATIONS} from '../camera';
 import {CrownIcon, Lucky} from '../components/Lucky';
-import {Annotate, At, Card, Coin, DefCard, Head, Kinetic, Num, Pill, Pop, stickerCut} from '../components/ui';
-import {C, HEAD, MONO} from '../theme';
+import {Annotate, At, Card, Coin, DefCard, Display, Kinetic, Label, Num, Pill, Pop, Rise, Script, stickerCut} from '../components/ui';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 import {useScene} from '../timing';
 
 // ---------- part A: the version conveyor ----------
@@ -16,7 +16,7 @@ const BEST_V = 731;
 const VersionCard: React.FC<{n: number; best?: boolean; showData?: boolean}> = ({n, best, showData}) => {
   const pts = new Array(7).fill(0).map((_, i) => 60 - random(`vc${n}-${i}`) * 50 - (best ? i * 6 : 0));
   return (
-    <div style={{width: 150, height: 190, background: best ? C.gold : C.paper, border: `5px solid ${C.ink}`, borderRadius: 16, boxShadow: `5px 5px 0 ${C.ink}`, boxSizing: 'border-box', padding: '12px 12px', position: 'relative'}}>
+    <div style={{width: 150, height: 190, background: best ? C.gold : C.paper, border: `${HAIR}px solid ${C.ink}`, borderRadius: 16, boxShadow: LIFT, boxSizing: 'border-box', padding: '12px 12px', position: 'relative'}}>
       <div style={{fontFamily: MONO, fontWeight: 800, fontSize: 30}}>v{n}</div>
       <svg width={118} height={70} viewBox="0 0 118 70" style={{marginTop: 8}}>
         {showData &&
@@ -52,7 +52,7 @@ const VersionBelt: React.FC<{f: number; model: number; versions: number; keep: n
   const streak = Math.min(1, v / 40);
   return (
     <>
-      <div style={{position: 'absolute', left: -300, top: BELT_Y + 100, width: 2520, height: 58, background: '#3B4163', border: `5px solid ${C.ink}`, borderRadius: 30}} />
+      <div style={{position: 'absolute', left: -300, top: BELT_Y + 100, width: 2520, height: 58, background: '#3B4163', border: `${HAIR}px solid ${C.ink}`, borderRadius: 30}} />
       {new Array(36).fill(0).map((_, i) => (
         <div key={i} style={{position: 'absolute', left: -300 + ((i * 70 - dist) % 2520 + 2520) % 2520, top: BELT_Y + 122, width: 12, height: 12, borderRadius: 9, background: '#6F78A8'}} />
       ))}
@@ -204,52 +204,61 @@ const Nested: React.FC<{f: number; cue: (e: string) => number}> = ({f, cue}) => 
         })}
       <Pop at={tenHeads + 4} x={700} y={300} f={f}>
         <Pill bg={C.gold} size={50}>
-          10 HEADS · 1 in <span style={{fontFamily: MONO}}>1,024</span>
+          10 heads · 1 in 1,024
         </Pill>
       </Pop>
       {/* side panel */}
       <Pop at={n1024} x={1440} y={200} f={f}>
-        <Pill size={58}>
-          <span style={{fontFamily: MONO}}>1,024</span> people
-        </Pill>
+        <div style={{display: 'flex', alignItems: 'baseline', gap: 18}}>
+          <Display size={130} color={C.blue}>
+            1,024
+          </Display>
+          <Script size={70}>people</Script>
+        </div>
       </Pop>
       <Pop at={flipping} x={1290} y={420} f={f}>
         <Card style={{textAlign: 'center', padding: '14px 34px'}}>
-          <Head size={32} color={C.grey}>
-            FLIP
-          </Head>
+          <Label size={18} color="#6E6757">
+            Flip
+          </Label>
           <Num size={84}>{Math.max(1, round)}/10</Num>
         </Card>
       </Pop>
       <Pop at={flipping + 3} x={1600} y={420} f={f}>
         <Card style={{textAlign: 'center', padding: '14px 30px', width: 270}}>
-          <Head size={32} color={C.grey}>
-            STANDING
-          </Head>
+          <Label size={18} color="#6E6757">
+            Standing
+          </Label>
           <Num size={84} color={standing === 1 ? C.orange : C.blue}>
             {standing.toLocaleString('en-US')}
           </Num>
         </Card>
       </Pop>
       {/* Lucky wonders */}
-      <Pop at={pic + 14} x={1560} y={760} from="down" f={f}>
+      <Pop at={pic + 14} x={1730} y={810} from="down" f={f}>
         <div style={stickerCut(5)}>
           <Lucky size={230} expr={f >= justLucky ? 'laugh' : f >= no ? 'shocked' : f >= tenHeads ? 'confident' : 'happy'} look={[-1, -0.4]} jolts={[tenHeads, no]} f={f} seed={7} />
         </div>
       </Pop>
-      <Pop at={genius - 2} x={1330} y={640} f={f}>
-        <div style={{position: 'relative'}}>
-          <Card style={{padding: '14px 30px', borderRadius: 60}}>
-            <div style={{position: 'relative'}}>
-              <Head size={56} color={f >= justLucky ? C.grey : C.ink} style={{opacity: f >= justLucky ? 0.5 : 1}}>
-                genius?
-              </Head>
-              <Annotate at={no} d="M-10 34 Q90 20 200 30" color={C.orange} width={10} w={10} h={10} f={f} />
+      {/* Genius? No. Just lucky. */}
+      <Pop at={genius - 2} x={1250} y={650} f={f}>
+        <div style={{position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+          <div style={{position: 'relative', opacity: f >= justLucky ? 0.4 : 1}}>
+            <Display size={150} color={C.paper}>
+              Genius?
+            </Display>
+            <Annotate at={no} dur={7} d="M-16 92 L470 62" color={C.orange} width={16} w={10} h={10} f={f} />
+          </div>
+          {f >= justLucky - 2 && (
+            <div style={{display: 'flex', alignItems: 'baseline', gap: 18, marginTop: -10}}>
+              <Rise at={justLucky - 2} f={f}>
+                <Script size={86} color={C.paper}>
+                  just
+                </Script>
+              </Rise>
+              <Kinetic text="lucky." at={justLucky + 2} size={150} color={C.orange} f={f} font="display" stagger={1.2} />
             </div>
-            {f >= justLucky && <Kinetic text="just lucky" at={justLucky} size={60} color={C.orange} f={f} />}
-          </Card>
-          <div style={{position: 'absolute', right: 30, bottom: -26, width: 26, height: 26, borderRadius: 99, background: C.paper, border: `4px solid ${C.ink}`}} />
-          <div style={{position: 'absolute', right: 6, bottom: -50, width: 14, height: 14, borderRadius: 99, background: C.paper, border: `4px solid ${C.ink}`}} />
+          )}
         </div>
       </Pop>
     </div>
@@ -276,37 +285,36 @@ export const S3Problem: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      {/* caution tape */}
-      <div style={{position: 'absolute', left: -200, top: 74, width: 2320 * tape, height: 54, overflow: 'hidden', transform: 'rotate(-2deg)', border: `4px solid ${C.ink}`, borderLeft: 'none', borderRight: 'none'}}>
-        <div style={{position: 'absolute', inset: 0, background: `repeating-linear-gradient(45deg, ${C.gold} 0 40px, ${C.ink} 40px 80px)`}} />
-        <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', gap: 120, paddingLeft: 260}}>
-          {[0, 1, 2, 3].map((i) => (
-            <span key={i} style={{background: C.paper, border: `3px solid ${C.ink}`, padding: '0 16px', fontFamily: HEAD, fontWeight: 800, fontSize: 28}}>
-              QUANTS WARN
-            </span>
-          ))}
+      {/* the warning, as a collage */}
+      {f >= quants - 4 && sp(f, model + 2, {damping: 16, stiffness: 140}) < 0.99 && (
+        <div style={{position: 'absolute', left: 0, right: 0, top: 96, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: `translateY(${-sp(f, model + 2, {damping: 16, stiffness: 140}) * 600}px)`}}>
+          <div style={{display: 'flex', alignItems: 'flex-end', gap: 26}}>
+            <Rise at={quants - 4} f={f}>
+              <Script size={96}>But</Script>
+            </Rise>
+            <div style={{transform: `scale(${2 - sp(f, quants, {damping: 12, stiffness: 240, mass: 0.7})})`, opacity: f >= quants ? 1 : 0}}>
+              <Display size={170} color={C.orange}>
+                Quants warn
+              </Display>
+            </div>
+          </div>
+          <div style={{alignSelf: 'flex-end', marginRight: 330, marginTop: -6}}>
+            <Rise at={elseAt - 2} f={f}>
+              <Script size={70}>about something else.</Script>
+            </Rise>
+          </div>
         </div>
-      </div>
-      <DefCard at={quants + 4} x={640} y={210} term="Quant" def="trades with math & data" out={backtest - 2} f={f} />
-      <Pop at={elseAt} x={1330} y={300} rot={6} f={f} out={model + 10}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
-          <svg width={110} height={100} viewBox="0 0 110 100">
-            <path d="M55 6 L104 94 L6 94 Z" fill={C.gold} stroke={C.ink} strokeWidth={7} strokeLinejoin="round" />
-            <path d="M55 36 L55 62" stroke={C.ink} strokeWidth={10} strokeLinecap="round" />
-            <circle cx={55} cy={78} r={6} fill={C.ink} />
-          </svg>
-          <Pill bg={C.paper} size={40}>
-            not the model…
-          </Pill>
-        </div>
-      </Pop>
-      <DefCard at={backtest} x={760} y={250} term="Backtest" def="simulating a strategy on past data" rot={-3} f={f} />
+      )}
+      <DefCard at={quants + 10} x={960} y={420} term="Quant" def="trades with math & data" out={model + 4} f={f} />
+      <DefCard at={backtest} x={960} y={250} term="Backtest" def="simulating a strategy on past data" f={f} />
 
       <VersionBelt f={f} model={model} versions={versions} keep={keep} past={past} />
       {/* how many versions went through the test */}
-      <Pop at={versions - 2} x={370} y={418} rot={-3} f={f} out={keep + 24}>
-        <Card style={{width: 400, padding: '12px 24px 14px', display: 'flex', flexDirection: 'column', gap: 2}} radius={22}>
-          <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 22, color: '#6E6757', letterSpacing: '0.06em'}}>VERSIONS TESTED</span>
+      <Pop at={versions - 2} x={370} y={418} f={f} out={keep + 24}>
+        <Card style={{width: 400, padding: '14px 26px 14px', display: 'flex', flexDirection: 'column', gap: 4}}>
+          <Label size={18} color="#6E6757">
+            Versions tested
+          </Label>
           <Num size={74} color={f >= keep ? C.orange : C.blue}>
             {Math.round(1000 * ramp(f, versions - 2, keep - 10, Easing.in(Easing.quad))).toLocaleString('en-US')}
           </Num>
@@ -315,8 +323,8 @@ export const S3Problem: React.FC = () => {
 
       {/* scanner gantry */}
       <div style={{position: 'absolute', left: nx - 130, top: BELT_Y - 260, width: 260, height: 380}}>
-        <div style={{position: 'absolute', left: 0, top: 0, width: 26, height: 380, background: C.greyLight, border: `5px solid ${C.ink}`, borderRadius: 10}} />
-        <div style={{position: 'absolute', right: 0, top: 0, width: 26, height: 380, background: C.greyLight, border: `5px solid ${C.ink}`, borderRadius: 10}} />
+        <div style={{position: 'absolute', left: 0, top: 0, width: 26, height: 380, background: C.greyLight, border: `${HAIR}px solid ${C.ink}`, borderRadius: 10}} />
+        <div style={{position: 'absolute', right: 0, top: 0, width: 26, height: 380, background: C.greyLight, border: `${HAIR}px solid ${C.ink}`, borderRadius: 10}} />
         <div style={{position: 'absolute', left: -10, top: -10, width: 280, height: 40, background: C.ink, borderRadius: 12}} />
         <div style={{position: 'absolute', left: 90, top: 2, fontFamily: MONO, fontWeight: 800, fontSize: 20, color: scanning && Math.floor(f / 3) % 2 ? C.orange : C.white}}>SCAN</div>
         {scanning && <div style={{position: 'absolute', left: 30, right: 30, top: 60 + ((f * 23) % 260), height: 8, background: C.orange, boxShadow: `0 0 18px 6px rgba(255,106,43,0.7)`}} />}
@@ -330,7 +338,7 @@ export const S3Problem: React.FC = () => {
               <div style={{position: 'absolute', inset: 0, backfaceVisibility: 'hidden'}}>
                 <VersionCard n={BEST_V} best />
               </div>
-              <div style={{position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: C.paper, border: `5px solid ${C.ink}`, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: C.paper, border: `${HAIR}px solid ${C.ink}`, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <Coin r={NEST.r / 1.6} face="H" />
               </div>
             </div>

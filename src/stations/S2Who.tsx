@@ -3,9 +3,9 @@ import React from 'react';
 import {AbsoluteFill, random} from 'remotion';
 import {clamp01, easeOut, lerp, ramp, sp, wobble} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Annotate, At, Card, Coin, Head, Kinetic, Num, Pill, Pop, Sticker, stickerCut} from '../components/ui';
+import {Annotate, At, Card, Coin, Display, Kinetic, Label, Num, Pill, Pop, Rise, Script, Sticker, stickerCut} from '../components/ui';
 import {feeCoinTracks, sample} from '../sim/physics';
-import {C, HEAD, MONO, SERIF} from '../theme';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 import {useScene} from '../timing';
 
 // ---------- a cartoon (not real) trader ----------
@@ -15,7 +15,7 @@ export const Trader: React.FC<{f: number; panic: number}> = ({f, panic}) => {
   const drop = (f * 2.4) % 40;
   return (
     <svg viewBox="0 0 260 330" width={270} height={343} style={{overflow: 'visible', display: 'block'}}>
-      <g transform={`translate(${jx} ${jy})`} stroke={C.ink} strokeWidth={6} strokeLinejoin="round" strokeLinecap="round">
+      <g transform={`translate(${jx} ${jy})`} stroke={C.ink} strokeWidth={3} strokeLinejoin="round" strokeLinecap="round">
         <path d="M58 330 Q58 210 130 206 Q202 210 202 330 Z" fill={C.paper} />
         <path d="M130 212 L118 250 L130 300 L142 250 Z" fill={C.orange} strokeWidth={5} />
         <path d="M74 240 Q40 200 52 128" fill="none" strokeWidth={22} />
@@ -46,14 +46,16 @@ const Thermo: React.FC<{level: number; f: number; burstAt?: number; label?: stri
   const H = 330;
   return (
     <div style={{position: 'relative', width: 120, height: 470}}>
-      <div style={{position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', fontFamily: MONO, fontWeight: 800, fontSize: 22, whiteSpace: 'nowrap'}}>{label}</div>
-      <div style={{position: 'absolute', left: 30, top: 40, width: 60, height: H, borderRadius: 30, border: `5px solid ${C.ink}`, background: C.paper, overflow: 'hidden', boxSizing: 'border-box', opacity: burst ? 0 : 1}}>
+      <div style={{position: 'absolute', top: 462, left: '50%', transform: 'translateX(-50%)'}}>
+        <Label size={17}>{label}</Label>
+      </div>
+      <div style={{position: 'absolute', left: 30, top: 40, width: 60, height: H, borderRadius: 30, border: `${HAIR}px solid ${C.ink}`, background: C.paper, overflow: 'hidden', boxSizing: 'border-box', opacity: burst ? 0 : 1}}>
         <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: `${lv * 100}%`, background: color}} />
         {[0.25, 0.5, 0.75].map((m) => (
           <div key={m} style={{position: 'absolute', left: 0, width: 18, top: `${(1 - m) * 100}%`, height: 4, background: C.ink}} />
         ))}
       </div>
-      <div style={{position: 'absolute', left: 10, top: 40 + H - 20, width: 100, height: 100, borderRadius: 99, background: color, border: `5px solid ${C.ink}`, boxSizing: 'border-box'}} />
+      <div style={{position: 'absolute', left: 10, top: 40 + H - 20, width: 100, height: 100, borderRadius: 99, background: color, border: `${HAIR}px solid ${C.ink}`, boxSizing: 'border-box'}} />
       {burst &&
         new Array(10).fill(0).map((_, i) => {
           const t = f - (burstAt as number);
@@ -88,7 +90,7 @@ const CandleBurst: React.FC<{f: number; at: number; x: number; y: number}> = ({f
     <>
       {new Array(26).fill(0).map((_, i) => {
         const a = -Math.PI / 2 + (random(`ca${i}`) - 0.5) * 2.6;
-        const v = 34 + random(`cv${i}`) * 40;
+        const v = 16 + random(`cv${i}`) * 20;
         const k = 14;
         const d = (1 - Math.exp(-t / k)) * k;
         const px = x + Math.cos(a) * v * d;
@@ -104,9 +106,6 @@ const CandleBurst: React.FC<{f: number; at: number; x: number; y: number}> = ({f
     </>
   );
 };
-
-// the papers behind the article (from its reference list)
-const SOURCES = ['Barber & Odean, 2000', 'Bailey & López de Prado, 2014', 'IMF, 2022', 'McLean & Pontiff, 2016', 'Harvey, Liu & Zhu, 2016', 'Gu, Kelly & Xiu, 2020'];
 
 export const S2Who: React.FC = () => {
   const {f, cue} = useScene('who');
@@ -124,53 +123,37 @@ export const S2Who: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      {/* the papers read for this research fan out behind the name */}
-      {SOURCES.map((src, i) => {
-        const at = first + 2 + i * 2;
-        const out = sp(f, logic - 4, {damping: 16, stiffness: 120});
-        const ang = (i - 2.5) * 12;
-        const rad = 520 + (i % 2) * 60;
-        const x = 960 + Math.sin((ang * Math.PI) / 180) * rad * 1.5;
-        const y = 1000 - Math.cos((ang * Math.PI) / 180) * rad * 0.55 + out * 900;
-        return (
-          <Pop key={src} at={at} x={x} y={y} rot={ang * 0.6} f={f}>
-            <div style={{width: 250, height: 150, background: C.paper, border: `4px solid ${C.ink}`, borderRadius: 12, boxShadow: `5px 5px 0 ${C.ink}`, padding: 14, boxSizing: 'border-box'}}>
-              <div style={{height: 10, width: '80%', background: C.ink, borderRadius: 5, marginBottom: 10}} />
-              {[0, 1, 2].map((l) => (
-                <div key={l} style={{height: 7, width: `${88 - l * 17}%`, background: C.greyLight, borderRadius: 4, marginBottom: 8}} />
-              ))}
-              <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 15, color: C.blue, whiteSpace: 'nowrap'}}>{src}</div>
-            </div>
-          </Pop>
-        );
-      })}
-
       {/* name card */}
-      <At x={960} y={lerp(400, 188, nameUp)} transform={`scale(${lerp(1, 0.64, nameUp)})`}>
-        <Pop at={name - 7} x={0} y={0} f={f} from="scale">
-          <Card style={{padding: '26px 56px 30px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14}}>
-            <Kinetic text="Andrea Gervasoni" at={name} size={128} f={f} serif stagger={1.3} />
-            <Pill bg={C.blue} color={C.white} size={38} style={{transform: `scale(${sp(f, tks - 6)})`}}>
-              TKS Focus: Blockchain
-            </Pill>
-          </Card>
-        </Pop>
+      <At x={960} y={450 - nameUp * 900} transform={`scale(${1 - 0.3 * nameUp})`}>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <div style={{alignSelf: 'flex-start', marginLeft: 40, marginBottom: -34, position: 'relative', zIndex: 2, transform: 'rotate(-5deg)'}}>
+            <Rise at={name - 6} f={f}>
+              <Script size={120}>I’m</Script>
+            </Rise>
+          </div>
+          <Kinetic text="Andrea Gervasoni" at={name} size={220} f={f} font="display" stagger={1.1} />
+          <div style={{display: 'flex', alignItems: 'center', gap: 28, marginTop: 22, opacity: ramp(f, first - 4, first + 4)}}>
+            <Label size={26}>TKS Focus · Blockchain</Label>
+            <div style={{width: 60, height: HAIR, background: C.ink}} />
+            <Script size={52} color={C.blue}>
+              my first research
+            </Script>
+          </div>
+        </div>
       </At>
-      <Sticker at={first} x={lerp(1450, 1340, nameUp)} y={lerp(270, 150, nameUp)} rot={8} bg={C.gold} color={C.ink} size={40} f={f}>
-        my first research
-      </Sticker>
 
       {/* the logic, as a formula */}
-      <Pop at={logic} x={960} y={348} f={f}>
-        <Card style={{display: 'flex', alignItems: 'center', gap: 22, padding: '14px 34px'}} radius={24}>
-          <span style={{fontFamily: SERIF, fontSize: 66, lineHeight: 1}}>emotions</span>
-          <svg width={80} height={40} viewBox="0 0 80 40">
-            <path d="M4 20 L70 20 M50 6 L72 20 L50 34" stroke={C.ink} strokeWidth={8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <Pop at={logic} x={960} y={175} f={f}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 30}}>
+          <Script size={78}>emotions</Script>
+          <svg width={120} height={40} viewBox="0 0 120 40">
+            <path d="M4 20 L110 20 M92 8 L112 20 L92 32" stroke={C.ink} strokeWidth={3} fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span style={{fontFamily: SERIF, fontStyle: 'italic', fontSize: 66, lineHeight: 1, color: C.orange}}>losses</span>
-        </Card>
+          <Display size={120} color={C.orange}>
+            Losses
+          </Display>
+        </div>
       </Pop>
-      <Annotate at={logic + 8} d="M780 400 Q960 420 1140 396" color={C.orange} width={7} w={10} h={10} f={f} />
 
       {/* the duel */}
       <Pop at={duel} x={460} y={700} from="left" f={f}>
@@ -183,12 +166,20 @@ export const S2Who: React.FC = () => {
       </Pop>
       <CandleBurst f={f} at={burst} x={720} y={460} />
       <Pop at={duel + 8} x={960} y={640} f={f}>
-        <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 90, color: C.paper, WebkitTextStroke: `4px ${C.ink}`, transform: `rotate(-8deg)`}}>VS</div>
+        <Script size={130}>vs.</Script>
+      </Pop>
+      <Pop at={human - 2} x={590} y={350} f={f}>
+        <Display size={96}>People</Display>
+      </Pop>
+      <Pop at={lucky - 2} x={1510} y={350} f={f}>
+        <Display size={96} color={C.blue}>
+          Computers
+        </Display>
       </Pop>
       {/* Lucky says hi next to the name card, then takes its place in the duel */}
       <At
-        x={lerp(1560, 1380, sp(f, duel, {damping: 15, stiffness: 120}))}
-        y={lerp(560, 680, sp(f, duel, {damping: 15, stiffness: 120}))}
+        x={lerp(1690, 1380, sp(f, duel, {damping: 15, stiffness: 120}))}
+        y={lerp(800, 680, sp(f, duel, {damping: 15, stiffness: 120}))}
         transform={`scale(${sp(f, name - 4, {damping: 9, stiffness: 180})})`}
       >
         <div style={stickerCut(6)}>
@@ -198,7 +189,7 @@ export const S2Who: React.FC = () => {
       <Pop at={duel + 8} x={1640} y={640} from="down" f={f}>
         <Thermo level={0} f={f} label="EMOTIONS" color={C.blue} />
       </Pop>
-      <Pop at={none} x={1640} y={300} f={f}>
+      <Pop at={none} x={1790} y={560} f={f}>
         <Num size={84} color={C.blue}>
           0
         </Num>
@@ -233,17 +224,21 @@ export const S2WhoB: React.FC = () => {
       <Pop at={data + 4} x={960} y={455} rot={-2} f={f} out={households - 10} outTo="up">
         <div style={{position: 'relative'}}>
           {[2, 1].map((k) => (
-            <div key={k} style={{position: 'absolute', inset: 0, transform: `translate(${k * 16}px, ${k * 14}px) rotate(${k * 1.6}deg)`, background: C.paper, border: `5px solid ${C.ink}`, borderRadius: 30}} />
+            <div key={k} style={{position: 'absolute', inset: 0, transform: `translate(${k * 16}px, ${k * 14}px) rotate(${k * 1.6}deg)`, background: C.paper, border: `${HAIR}px solid ${C.ink}`, borderRadius: 6}} />
           ))}
           <Card style={{width: 1280, padding: '40px 60px 46px', display: 'flex', flexDirection: 'column', gap: 16, position: 'relative'}}>
             <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
-              <Pill bg={C.ink} color={C.white} size={26} mono>
-                JOURNAL OF FINANCE · 2000
+              <Pill bg={C.ink} color={C.paper} size={30}>
+                Journal of Finance · 2000
               </Pill>
-              <span style={{fontFamily: MONO, fontWeight: 700, fontSize: 24, color: '#6E6757'}}>peer-reviewed study</span>
+              <Label size={18} color="#6E6757">
+                peer-reviewed study
+              </Label>
             </div>
-            <Head size={88} style={{whiteSpace: 'normal'}}>Trading Is Hazardous to Your Wealth</Head>
-            <div style={{fontFamily: HEAD, fontWeight: 700, fontSize: 38}}>Brad Barber &amp; Terrance Odean</div>
+            <Script size={100} style={{whiteSpace: 'normal', lineHeight: 1.02}}>
+              Trading Is Hazardous to Your Wealth
+            </Script>
+            <Label size={24}>Brad Barber &amp; Terrance Odean</Label>
             {[0, 1, 2].map((l) => (
               <div key={l} style={{height: 14, width: `${92 - l * 14}%`, background: C.greyLight, borderRadius: 7}} />
             ))}
@@ -257,19 +252,23 @@ export const S2WhoB: React.FC = () => {
       </Pop>
       <Pop at={households - 8} x={960} y={130} from="up" f={f}>
         <Card style={{display: 'flex', alignItems: 'baseline', gap: 24, padding: '18px 44px'}}>
-          <Head size={44} color={C.grey}>
+          <Script size={52} color="#6E6757">
             a study of
-          </Head>
-          <Num size={96} color={C.blue}>
+          </Script>
+          <Num size={112} color={C.blue}>
             {house.toLocaleString('en-US')}
           </Num>
-          <Head size={60}>households</Head>
+          <Script size={60}>households</Script>
         </Card>
       </Pop>
 
       <Pop at={households - 4} x={960} y={490} f={f}>
         <Card style={{width: 1560, height: 470, position: 'relative'}} pad={0}>
-          <div style={{position: 'absolute', right: 36, top: 26, fontFamily: HEAD, fontWeight: 700, fontSize: 30, color: C.grey}}>return per year</div>
+          <div style={{position: 'absolute', right: 36, top: 30}}>
+            <Label size={20} color="#6E6757">
+              Return per year
+            </Label>
+          </div>
           {/* a crowd of households fills the card, then clears for the race */}
           {f < race + 14 &&
             new Array(84).fill(0).map((_, i) => {
@@ -286,13 +285,13 @@ export const S2WhoB: React.FC = () => {
                   viewBox="0 0 56 56"
                   style={{position: 'absolute', left: 60 + col * 70, top: 92 + row * 84 + out * 60, transform: `scale(${p * (1 - out)})`, opacity: 1 - out}}
                 >
-                  <path d="M6 26 L28 6 L50 26 L50 50 L6 50 Z" fill={i % 5 === 0 ? C.blueSoft : C.cream} stroke={C.ink} strokeWidth={4} strokeLinejoin="round" />
+                  <path d="M6 26 L28 6 L50 26 L50 50 L6 50 Z" fill={i % 5 === 0 ? C.blueSoft : C.cream} stroke={C.ink} strokeWidth={2.5} strokeLinejoin="round" />
                   <rect x={22} y={32} width={12} height={18} fill={C.ink} />
                 </svg>
               );
             })}
           <div style={{position: 'absolute', left: 40, top: 30, opacity: ramp(f, race - 10, race - 2)}}>
-            <Head size={46}>Most active 20% of traders</Head>
+            <Display size={56}>Most active 20% of traders</Display>
           </div>
           <div
             style={{
@@ -302,9 +301,9 @@ export const S2WhoB: React.FC = () => {
               height: 80,
               width: orangeW,
               background: C.orange,
-              border: `5px solid ${C.ink}`,
+              border: `${HAIR}px solid ${C.ink}`,
               borderRadius: 18,
-              boxShadow: `6px 6px 0 ${C.ink}`,
+              boxShadow: LIFT,
               boxSizing: 'border-box',
               transform: `scale(${1 - stopW}, ${1 + stopW})`,
               transformOrigin: 'left center',
@@ -326,7 +325,7 @@ export const S2WhoB: React.FC = () => {
             );
           })}
           <div style={{position: 'absolute', left: 40, top: 236, opacity: ramp(f, race - 8, race)}}>
-            <Head size={46}>Market</Head>
+            <Display size={56}>The market</Display>
           </div>
           <div
             style={{
@@ -336,9 +335,9 @@ export const S2WhoB: React.FC = () => {
               height: 80,
               width: blueW,
               background: C.blue,
-              border: `5px solid ${C.ink}`,
+              border: `${HAIR}px solid ${C.ink}`,
               borderRadius: 18,
-              boxShadow: `6px 6px 0 ${C.ink}`,
+              boxShadow: LIFT,
               boxSizing: 'border-box',
             }}
           />

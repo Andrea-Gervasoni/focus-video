@@ -4,8 +4,8 @@ import React from 'react';
 import {AbsoluteFill, random} from 'remotion';
 import {clamp01, easeOut, ramp, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Annotate, At, DefCard, Head, Kinetic, Num, Pill, Pop, stickerCut} from '../components/ui';
-import {C, MONO, SERIF} from '../theme';
+import {Annotate, At, DefCard, Display, Kinetic, Label, Num, Pill, Pop, Rise, Script, stickerCut} from '../components/ui';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 import {useScene} from '../timing';
 
 // 100 tokens; 58 die (14,000 of ~24,000 is about 58%)
@@ -32,7 +32,7 @@ const TOKENS = (() => {
 
 const Ghost: React.FC<{s: number}> = ({s}) => (
   <svg viewBox="-30 -34 60 66" width={52 * s} height={57 * s} style={{overflow: 'visible', display: 'block'}}>
-    <path d="M-22 26 L-22 -6 Q-22 -30 0 -30 Q22 -30 22 -6 L22 26 Q16 18 11 26 Q5 18 0 26 Q-5 18 -11 26 Q-16 18 -22 26 Z" fill={C.white} stroke={C.ink} strokeWidth={4} strokeLinejoin="round" />
+    <path d="M-22 26 L-22 -6 Q-22 -30 0 -30 Q22 -30 22 -6 L22 26 Q16 18 11 26 Q5 18 0 26 Q-5 18 -11 26 Q-16 18 -22 26 Z" fill={C.white} stroke={C.ink} strokeWidth={2.5} strokeLinejoin="round" />
     <circle cx={-8} cy={-6} r={4} fill={C.ink} />
     <circle cx={8} cy={-6} r={4} fill={C.ink} />
     <ellipse cx={0} cy={8} rx={4} ry={5} fill={C.ink} />
@@ -51,10 +51,10 @@ export const S5Crypto: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <Pop at={crypto - 14} x={760} y={130} from="up" f={f}>
+      <Pop at={crypto - 14} x={800} y={118} from="up" f={f}>
         <div style={{display: 'flex', alignItems: 'baseline', gap: 22, whiteSpace: 'nowrap'}}>
-          <span style={{fontFamily: SERIF, fontSize: 96, lineHeight: 1, color: C.ink}}>In crypto,</span>
-          {f >= worse - 2 && <Kinetic text="it’s even worse." at={worse - 2} size={96} color={C.orange} f={f} serif italic stagger={1.1} />}
+          <Script size={84}>In crypto it’s</Script>
+          {f >= worse - 2 && <Kinetic text="even worse." at={worse - 2} size={150} color={C.orange} f={f} font="display" stagger={1.1} />}
         </div>
       </Pop>
       {/* the graveyard */}
@@ -68,7 +68,7 @@ export const S5Crypto: React.FC = () => {
           const d = m > 0 ? toTomb(m) : COIN_PATH;
           return (
             <g key={t.i} transform={`translate(${t.x} ${t.y}) scale(${appear * Math.max(0.1, flip)}, ${appear})`}>
-              <path d={d} fill={m > 0.5 ? C.greyLight : t.color} stroke={C.ink} strokeWidth={4} />
+              <path d={d} fill={m > 0.5 ? C.greyLight : t.color} stroke={C.ink} strokeWidth={2.5} />
               {m > 0.6 ? (
                 <path d="M-8 4 L8 4 M0 -4 L0 14" stroke={C.ink} strokeWidth={3.5} strokeLinecap="round" />
               ) : (
@@ -96,21 +96,25 @@ export const S5Crypto: React.FC = () => {
       })}
       {/* the numbers */}
       <Pop at={d14 - 2} x={1380} y={330} f={f}>
-        <Num size={150} color={C.orange} style={{WebkitTextStroke: `4px ${C.ink}`}}>
+        <Num size={200} color={C.orange}>
           {count.toLocaleString('en-US')}+
         </Num>
       </Pop>
-      <Pop at={d14 + 6} x={1380} y={470} f={f}>
-        <Head size={64}>
-          of <span style={{fontFamily: MONO}}>~24,000</span> tokens
-        </Head>
+      <Pop at={d14 + 6} x={1380} y={480} f={f}>
+        <div style={{display: 'flex', alignItems: 'baseline', gap: 16}}>
+          <Script size={64}>of</Script>
+          <Display size={84}>~24,000</Display>
+          <Script size={64}>tokens</Script>
+        </div>
       </Pop>
-      <Pop at={dead} x={1380} y={590} rot={-4} f={f}>
-        <Pill bg={C.ink} color={C.white} size={70} style={{borderRadius: 26}}>
-          DEAD
-        </Pill>
+      <Pop at={dead} x={1380} y={600} rot={-3} f={f}>
+        <div style={{background: C.ink, padding: '10px 34px 4px'}}>
+          <Display size={110} color={C.paper}>
+            Dead
+          </Display>
+        </div>
       </Pop>
-      <DefCard at={tokens} x={1390} y={705} term="Token" def="a crypto coin" rot={2} f={f} />
+      <DefCard at={tokens} x={1390} y={745} term="Token" def="a crypto coin" f={f} />
     </AbsoluteFill>
   );
 };
@@ -130,15 +134,18 @@ export const S5CryptoB: React.FC = () => {
   return (
     <AbsoluteFill>
       <Pop at={btc} x={960} y={150} from="up" f={f}>
-        <div style={{fontFamily: SERIF, fontSize: 104, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
-          How much <i style={{color: C.blue}}>history?</i>
+        <div style={{display: 'flex', alignItems: 'baseline', gap: 22}}>
+          <Script size={90}>How much</Script>
+          <Display size={150} color={C.blue}>
+            History?
+          </Display>
         </div>
       </Pop>
       {/* stocks: ~100 years */}
       <Pop at={btc + 2} x={TL_X0 + 140} y={300} f={f}>
-        <Head size={50}>Stocks</Head>
+        <Display size={64}>Stocks</Display>
       </Pop>
-      <div style={{position: 'absolute', left: TL_X0, top: 340, width: (TL_X1 - TL_X0) * grow, height: 90, background: `repeating-linear-gradient(90deg, ${C.blue} 0 ${PX_YEAR * 10 - 4}px, #1A33DD ${PX_YEAR * 10 - 4}px ${PX_YEAR * 10}px)`, border: `5px solid ${C.ink}`, borderRadius: 18, boxShadow: `6px 6px 0 ${C.ink}`, boxSizing: 'border-box'}} />
+      <div style={{position: 'absolute', left: TL_X0, top: 340, width: (TL_X1 - TL_X0) * grow, height: 90, background: `repeating-linear-gradient(90deg, ${C.blue} 0 ${PX_YEAR * 10 - 4}px, #1A33DD ${PX_YEAR * 10 - 4}px ${PX_YEAR * 10}px)`, border: `${HAIR}px solid ${C.ink}`, borderRadius: 3, boxShadow: LIFT, boxSizing: 'border-box'}} />
       {new Array(10).fill(0).map((_, i) => {
         const x = TL_X0 + (i + 0.5) * PX_YEAR * 10;
         if (TL_X0 + (TL_X1 - TL_X0) * grow < x) return null;
@@ -155,10 +162,10 @@ export const S5CryptoB: React.FC = () => {
       </Pop>
       {/* bitcoin: ~15 years, aligned to today */}
       <Pop at={fifteen - 6} x={TL_X0 + 150} y={590} f={f}>
-        <Head size={50}>Bitcoin</Head>
+        <Display size={64}>Bitcoin</Display>
       </Pop>
-      <div style={{position: 'absolute', left: TL_X1 - 15 * PX_YEAR * btcGrow, top: 630, width: 15 * PX_YEAR * btcGrow, height: 90, background: C.orange, border: btcGrow > 0 ? `5px solid ${C.ink}` : 'none', borderRadius: 18, boxShadow: `6px 6px 0 ${C.ink}`, boxSizing: 'border-box'}} />
-      <div style={{position: 'absolute', left: TL_X0, top: 672, width: TL_X1 - TL_X0 - 15 * PX_YEAR - 10, height: 0, borderTop: `5px dashed ${C.greyLight}`, opacity: btcGrow}} />
+      <div style={{position: 'absolute', left: TL_X1 - 15 * PX_YEAR * btcGrow, top: 630, width: 15 * PX_YEAR * btcGrow, height: 90, background: C.orange, border: btcGrow > 0 ? `${HAIR}px solid ${C.ink}` : 'none', borderRadius: 3, boxShadow: LIFT, boxSizing: 'border-box'}} />
+      <div style={{position: 'absolute', left: TL_X0, top: 672, width: TL_X1 - TL_X0 - 15 * PX_YEAR - 10, height: 0, borderTop: `3px dashed ${C.grey}`, opacity: btcGrow}} />
       <Pop at={fifteen + 2} x={TL_X1 - 15 * PX_YEAR - 170} y={675} f={f}>
         <Num size={56} color={C.orange}>
           ~15 years

@@ -3,8 +3,8 @@ import React from 'react';
 import {AbsoluteFill, interpolateColors, random} from 'remotion';
 import {clamp01, easeOut, lerp, ramp, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Annotate, At, Card, DefCard, Head, Num, Pill, Pop, Sticker, stickerCut} from '../components/ui';
-import {C, HEAD, MONO, SERIF} from '../theme';
+import {Annotate, At, Card, DefCard, Display, Label, Num, Pill, Pop, Rise, Script, Sticker, stickerCut} from '../components/ui';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 import {useScene} from '../timing';
 
 // DSR of a backtest with Sharpe 2.0 (two years of daily data), from the article
@@ -25,7 +25,7 @@ const Reel: React.FC<{from: number; to: number; spin: number; seed: number}> = (
   const shown = spin >= 1 ? to : (from + Math.floor(travel)) % 10;
   const frac = spinning ? travel % 1 : 0;
   return (
-    <div style={{width: 100, height: H, background: C.paper, border: `5px solid ${C.ink}`, borderRadius: 14, overflow: 'hidden', position: 'relative', boxSizing: 'border-box', boxShadow: 'inset 0 18px 18px rgba(0,0,0,0.12), inset 0 -18px 18px rgba(0,0,0,0.12)'}}>
+    <div style={{width: 100, height: H, background: C.paper, border: `${HAIR}px solid ${C.ink}`, borderRadius: 4, overflow: 'hidden', position: 'relative', boxSizing: 'border-box', boxShadow: 'inset 0 18px 18px rgba(0,0,0,0.12), inset 0 -18px 18px rgba(0,0,0,0.12)'}}>
       {[0, 1].map((k) => (
         <div
           key={k}
@@ -38,9 +38,8 @@ const Reel: React.FC<{from: number; to: number; spin: number; seed: number}> = (
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: MONO,
-            fontWeight: 800,
-            fontSize: 92,
+            fontFamily: DISPLAY,
+            fontSize: 104,
             color: C.ink,
             filter: spinning ? 'blur(2.5px)' : undefined,
           }}
@@ -102,12 +101,14 @@ export const S6Fix: React.FC = () => {
         <At
           x={960}
           y={lerp(470, 330, ramp(f, dsr - 6, dsr + 10))}
-          transform={`scale(${sp(f, fix - 14, {damping: 9, stiffness: 190}) * (1 - 0.45 * ramp(f, dsr - 6, dsr + 10))})`}
-          style={{opacity: 1 - ramp(f, dsr, dsr + 14)}}
+          transform={`scale(${(2 - sp(f, fix - 14, {damping: 12, stiffness: 230, mass: 0.7})) * (1 - 0.45 * ramp(f, dsr - 6, dsr + 10))})`}
+          style={{opacity: Math.min(f >= fix - 14 ? 1 : 0, 1 - ramp(f, dsr, dsr + 14))}}
         >
-          <div style={{position: 'relative', fontFamily: SERIF, fontSize: 240, lineHeight: 1, color: C.ink, whiteSpace: 'nowrap'}}>
-            The <span style={{fontStyle: 'italic', color: C.blue}}>fix.</span>
-            <Annotate at={fix + 2} d="M300 236 Q470 222 640 232" color={C.blue} width={11} w={10} h={10} f={f} />
+          <div style={{position: 'relative', display: 'flex', alignItems: 'baseline', gap: 30}}>
+            <Script size={150}>There’s a</Script>
+            <Display size={330} color={C.blue}>
+              Fix.
+            </Display>
           </div>
         </At>
       )}
@@ -120,11 +121,11 @@ export const S6Fix: React.FC = () => {
       <Pop at={take} x={300} y={420} f={f}>
         <div style={{transform: `rotate(${pinWob - 4}deg)`, transformOrigin: '50% 0%'}}>
           <Card style={{width: 300, height: 260, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, position: 'relative'}}>
-            <div style={{position: 'absolute', top: -24, left: 128, width: 34, height: 34, borderRadius: 99, background: C.orange, border: `5px solid ${C.ink}`}} />
+            <div style={{position: 'absolute', top: -24, left: 128, width: 34, height: 34, borderRadius: 99, background: C.orange, border: `${HAIR}px solid ${C.ink}`}} />
             <Pill bg={C.ink} color={C.white} size={26}>
               BACKTEST
             </Pill>
-            <Head size={46}>SHARPE</Head>
+            <Script size={50}>Sharpe</Script>
             <Num size={110} color={C.blue}>
               2.0
             </Num>
@@ -146,14 +147,14 @@ export const S6Fix: React.FC = () => {
       {/* slot machine */}
       <Pop at={dsr + 4} x={840} y={560} from="down" f={f}>
         <div style={{position: 'relative', width: 600, height: 470}}>
-          <div style={{position: 'absolute', inset: 0, background: C.blue, border: `6px solid ${C.ink}`, borderRadius: 40, boxShadow: `8px 8px 0 ${C.ink}`}} />
-          <div style={{position: 'absolute', left: 40, right: 40, top: 26, height: 70, background: C.gold, border: `5px solid ${C.ink}`, borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 40}}>
-            VERSIONS TRIED
+          <div style={{position: 'absolute', inset: 0, background: C.blue, border: `${HAIR}px solid ${C.ink}`, borderRadius: 10, boxShadow: LIFT}} />
+          <div style={{position: 'absolute', left: 40, right: 40, top: 26, height: 70, background: C.gold, border: `${HAIR}px solid ${C.ink}`, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Label size={30}>Versions tried</Label>
           </div>
           {new Array(12).fill(0).map((_, i) => (
-            <div key={i} style={{position: 'absolute', left: 30 + i * 47, top: 8, width: 14, height: 14, borderRadius: 9, background: (Math.floor(f / 4) + i) % 2 ? C.gold : C.paper, border: `3px solid ${C.ink}`}} />
+            <div key={i} style={{position: 'absolute', left: 30 + i * 47, top: 8, width: 14, height: 14, borderRadius: 9, background: (Math.floor(f / 4) + i) % 2 ? C.gold : C.paper, border: `2px solid ${C.ink}`}} />
           ))}
-          <div style={{position: 'absolute', left: 50, right: 50, top: 130, height: 180, background: C.ink, borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14}}>
+          <div style={{position: 'absolute', left: 50, right: 50, top: 130, height: 180, background: C.ink, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14}}>
             {[0, 1, 2, 3].map((r) => {
               if (nextIdx >= 0) {
                 const spin = clamp01((f - pulls[nextIdx] - r * 2) / (14 - r * 2));
@@ -163,14 +164,16 @@ export const S6Fix: React.FC = () => {
               return <Reel key={r} from={target[r]} to={target[r]} spin={0} seed={r} />;
             })}
           </div>
-          <div style={{position: 'absolute', left: 60, right: 60, top: 340, height: 90, background: '#1A33DD', border: `5px solid ${C.ink}`, borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <span style={{fontFamily: MONO, fontWeight: 800, fontSize: 34, color: C.white}}>{step >= 0 ? `${STEPS[step].n.toLocaleString('en-US')} tried` : 'pull to try'}</span>
+          <div style={{position: 'absolute', left: 60, right: 60, top: 340, height: 90, background: '#1A33DD', border: `${HAIR}px solid ${C.ink}`, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Label size={24} color={C.white}>
+              {step >= 0 ? `${STEPS[step].n.toLocaleString('en-US')} tried` : 'pull to try'}
+            </Label>
           </div>
           {/* lever */}
-          <div style={{position: 'absolute', right: -70, top: 250, width: 40, height: 80, background: C.greyLight, border: `5px solid ${C.ink}`, borderRadius: 12}} />
+          <div style={{position: 'absolute', right: -70, top: 250, width: 40, height: 80, background: C.greyLight, border: `${HAIR}px solid ${C.ink}`, borderRadius: 12}} />
           <div style={{position: 'absolute', right: -52, top: 270, width: 10, height: 10, transform: `rotate(${lever * 150}deg)`, transformOrigin: '5px 5px'}}>
             <div style={{position: 'absolute', left: -4, top: -200, width: 18, height: 205, background: C.ink, borderRadius: 9}} />
-            <div style={{position: 'absolute', left: -26, top: -246, width: 62, height: 62, borderRadius: 99, background: C.orange, border: `6px solid ${C.ink}`, boxSizing: 'border-box'}} />
+            <div style={{position: 'absolute', left: -26, top: -246, width: 62, height: 62, borderRadius: 99, background: C.orange, border: `${HAIR}px solid ${C.ink}`, boxSizing: 'border-box'}} />
           </div>
         </div>
       </Pop>
@@ -183,24 +186,24 @@ export const S6Fix: React.FC = () => {
       {/* pressure gauge */}
       <Pop at={dsr + 11} x={1610} y={450} f={f}>
         <div style={{position: 'relative', width: 400, height: 400}}>
-          <div style={{position: 'absolute', left: 175, top: -40, width: 50, height: 60, background: C.greyLight, border: `5px solid ${C.ink}`, borderRadius: 8}} />
-          <div style={{position: 'absolute', inset: 0, borderRadius: '50%', background: C.paper, border: `8px solid ${C.ink}`, boxShadow: `8px 8px 0 ${C.ink}`}} />
+          <div style={{position: 'absolute', left: 175, top: -40, width: 50, height: 60, background: C.greyLight, border: `${HAIR}px solid ${C.ink}`, borderRadius: 8}} />
+          <div style={{position: 'absolute', inset: 0, borderRadius: '50%', background: C.paper, border: `${HAIR}px solid ${C.ink}`, boxShadow: LIFT}} />
           <svg width={400} height={400} viewBox="-200 -200 400 400" style={{position: 'absolute', left: 0, top: 0}}>
             {[0, 25, 50, 75, 100].map((v) => {
               const a = ((-120 + (v / 100) * 240 - 90) * Math.PI) / 180;
-              return <line key={v} x1={Math.cos(a) * 140} y1={Math.sin(a) * 140} x2={Math.cos(a) * 165} y2={Math.sin(a) * 165} stroke={C.ink} strokeWidth={7} strokeLinecap="round" />;
+              return <line key={v} x1={Math.cos(a) * 140} y1={Math.sin(a) * 140} x2={Math.cos(a) * 165} y2={Math.sin(a) * 165} stroke={C.ink} strokeWidth={3} strokeLinecap="round" />;
             })}
             <path d={describeArc(150, -120, -120 + (needle / 100) * 240)} stroke={col} strokeWidth={22} fill="none" strokeLinecap="round" />
             <g transform={`rotate(${ang})`}>
               <path d="M-9 0 L0 -150 L9 0 Z" fill={C.ink} />
             </g>
-            <circle r={22} fill={C.gold} stroke={C.ink} strokeWidth={7} />
+            <circle r={22} fill={C.gold} stroke={C.ink} strokeWidth={3} />
           </svg>
           <div style={{position: 'absolute', left: 0, right: 0, top: 236, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <Num size={80} color={col}>
               {step >= 0 ? `${shownPct}%` : '--'}
             </Num>
-            <span style={{fontFamily: HEAD, fontWeight: 800, fontSize: 26}}>chance it’s real</span>
+            <Script size={32}>chance it’s real</Script>
           </div>
           {/* steam puffs when the pressure drops */}
           {lands.slice(1).map((l, i) =>
@@ -219,7 +222,7 @@ export const S6Fix: React.FC = () => {
                     height: r * 2,
                     borderRadius: '50%',
                     background: C.white,
-                    border: `4px solid ${C.ink}`,
+                    border: `${HAIR}px solid ${C.ink}`,
                     opacity: 1 - t / 34,
                   }}
                 />

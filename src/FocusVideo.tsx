@@ -4,10 +4,11 @@ import {AbsoluteFill, Sequence, useCurrentFrame} from 'remotion';
 import {Soundtrack} from './audio/Soundtrack';
 import {camera, FLIP_COIN, STATIONS} from './camera';
 import {Captions} from './components/Captions';
+import {Display, Label, Script} from './components/ui';
 import {coinZoom, EndCard} from './overlay/EndCard';
 import {paperSlide, ReferencesSlate, SourceNotes} from './overlay/Sources';
 import {STORY_FRAMES, TOTAL_FRAMES} from './script';
-import {C, H, HEAD, MONO, SHADOW, STROKE, W} from './theme';
+import {C, DISPLAY, H, HAIR, LIFT, MONO, SANS, SCRIPT, W} from './theme';
 import {cueAbs, getScene, sceneFrames} from './timing';
 import {ChapterHeader, Grain, World} from './world/World';
 
@@ -71,24 +72,27 @@ export const FocusVideoVertical: React.FC = () => {
   const scale = 1000 / W;
   return (
     <AbsoluteFill style={{background: C.cream}}>
-      <AbsoluteFill style={{backgroundImage: `radial-gradient(${C.creamDark} 2.6px, transparent 2.9px)`, backgroundSize: '46px 46px', backgroundPosition: `${f * 0.35}px ${f * 0.22}px`}} />
-      <div style={{position: 'absolute', top: 150, left: 70, right: 70, display: 'flex', flexDirection: 'column', gap: 26, alignItems: 'flex-start'}}>
-        <div style={{fontFamily: MONO, fontWeight: 800, fontSize: 30, background: C.blue, color: C.white, border: `${STROKE}px solid ${C.ink}`, borderRadius: 999, padding: '8px 24px', boxShadow: SHADOW}}>
-          TKS FOCUS · BLOCKCHAIN
-        </div>
-        <div style={{fontFamily: HEAD, fontWeight: 800, fontSize: 74, lineHeight: 1.0, letterSpacing: '-0.03em', color: C.ink, background: C.paper, border: `${STROKE}px solid ${C.ink}`, borderRadius: 32, boxShadow: SHADOW, padding: '26px 34px'}}>
-          The Best Crypto Trading AI Might Just Be the Luckiest
-        </div>
+      <AbsoluteFill style={{backgroundImage: `repeating-linear-gradient(90deg, ${C.creamDark} 0px, ${C.creamDark} 1.6px, transparent 1.6px, transparent 34px)`, backgroundPosition: `${f * 0.3}px 0px`, opacity: 0.55}} />
+      <div style={{position: 'absolute', top: 130, left: 70, right: 70, display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+        <Label size={24} color={C.blue}>
+          TKS Focus · Blockchain
+        </Label>
+        <Script size={68} style={{marginTop: 26, whiteSpace: 'normal', lineHeight: 1.05}}>
+          The best crypto trading AI might just be the
+        </Script>
+        <Display size={200} color={C.orange} style={{marginTop: 4}}>
+          Luckiest
+        </Display>
       </div>
-      <div style={{position: 'absolute', left: 40, top: 640, width: W * scale, height: H * scale, border: `${STROKE + 1}px solid ${C.ink}`, borderRadius: 28, boxShadow: SHADOW, overflow: 'hidden'}}>
+      <div style={{position: 'absolute', left: 40, top: 640, width: W * scale, height: H * scale, border: `${HAIR}px solid ${C.ink}`, borderRadius: 4, boxShadow: LIFT, overflow: 'hidden'}}>
         <div style={{width: W, height: H, transform: `scale(${scale})`, transformOrigin: '0 0', position: 'relative'}}>
           <Stage captions={false} />
         </div>
       </div>
       <Captions fontSize={60} maxWords={7} maxChars={36} top={1250} maxWidth={960} wrap />
       <SourceNotes left={60} bottom={150} size={26} maxWidth={960} wrap />
-      <div style={{position: 'absolute', top: 1500, left: 0, right: 0, textAlign: 'center', fontFamily: HEAD, fontWeight: 800, fontSize: 38, color: C.ink}}>
-        Andrea Gervasoni · full article: link in bio
+      <div style={{position: 'absolute', top: 1500, left: 0, right: 0, display: 'flex', justifyContent: 'center'}}>
+        <Label size={26}>Andrea Gervasoni · full article: link in bio</Label>
       </div>
       <Sequence from={STORY_FRAMES - T2} layout="none">
         <TallSlate />

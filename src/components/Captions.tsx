@@ -1,8 +1,8 @@
 import React, {useMemo} from 'react';
 import {useCurrentFrame} from 'remotion';
-import {sp, wobble} from '../anim';
+import {sp} from '../anim';
 import {FPS} from '../script';
-import {C, HEAD, MONO, SHADOW, STROKE} from '../theme';
+import {C, DISPLAY, HAIR, LIFT, SANS} from '../theme';
 import {allWords, CaptionWord} from '../timing';
 
 // Kinetic captions, bottom third: words pop in as they are spoken, the active
@@ -138,41 +138,37 @@ export const Captions: React.FC<{fontSize?: number; maxWords?: number; maxChars?
           display: 'flex',
           flexWrap: wrap ? 'wrap' : 'nowrap',
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'baseline',
           rowGap: fontSize * 0.1,
           maxWidth,
           background: C.paper,
-          border: `${STROKE}px solid ${C.ink}`,
-          borderRadius: fontSize * 0.55,
-          boxShadow: SHADOW,
-          padding: `${fontSize * 0.14}px ${fontSize * 0.32}px`,
-          transform: `translateY(${(1 - p) * 30}px) scale(${0.92 + 0.08 * p})`,
+          border: `${HAIR}px solid ${C.ink}`,
+          borderRadius: 4,
+          boxShadow: LIFT,
+          padding: `${fontSize * 0.2}px ${fontSize * 0.42}px ${fontSize * 0.24}px`,
+          transform: `translateY(${(1 - p) * 24}px)`,
         }}
       >
         {g.words.map((w, i) => {
           const spoken = t >= w.s - 0.03 || g.start <= 0.05;
           const isActive = i === active;
           const num = isNumber(w.text);
-          const wp = sp(frame, w.s * FPS - 2, {damping: 10, stiffness: 300, mass: 0.5});
-          const wb = wobble(frame, w.s * FPS + 3, 0.08, 0.9, 0.25);
+          const wp = sp(frame, w.s * FPS - 2, {damping: 12, stiffness: 300, mass: 0.5});
           return (
             <span
               key={`${w.scene}-${w.i}`}
               style={{
-                fontFamily: num ? MONO : HEAD,
-                fontWeight: 800,
-                fontSize: num ? fontSize * 1.28 : fontSize,
-                lineHeight: 1.12,
-                letterSpacing: num ? '-0.03em' : '-0.01em',
+                fontFamily: num ? DISPLAY : SANS,
+                fontWeight: num ? 400 : 700,
+                fontSize: num ? fontSize * 1.18 : fontSize,
+                lineHeight: 1.15,
+                letterSpacing: num ? '0.01em' : '-0.015em',
                 whiteSpace: 'nowrap',
-                padding: `0 ${fontSize * 0.18}px`,
-                margin: `0 ${fontSize * 0.02}px`,
-                borderRadius: fontSize * 0.28,
-                color: isActive ? C.white : num ? C.blue : C.ink,
-                background: isActive ? C.blue : 'transparent',
-                border: `4px solid ${isActive ? C.ink : 'transparent'}`,
-                opacity: spoken ? 1 : 0.25,
-                transform: spoken ? `translateY(${(1 - wp) * 14}px) scale(${(0.86 + 0.14 * wp) * (1 + wb)}, ${(0.86 + 0.14 * wp) * (1 - wb)})` : 'translateY(6px)',
+                padding: `0 ${fontSize * 0.13}px`,
+                color: isActive || num ? C.blue : C.ink,
+                boxShadow: isActive ? `inset 0 -${Math.max(3, fontSize * 0.07)}px 0 ${C.blue}` : 'none',
+                opacity: spoken ? 1 : 0.28,
+                transform: spoken ? `translateY(${(1 - wp) * 10}px)` : 'translateY(4px)',
                 display: 'inline-block',
               }}
             >

@@ -4,7 +4,7 @@ import {AbsoluteFill, random, staticFile, useCurrentFrame} from 'remotion';
 import {Cam, camera, cameraSpeed, STATIONS, StationId, viewRect, worldTransform} from '../camera';
 import {clamp01, sp} from '../anim';
 import {SceneId, SCENES, STORY_FRAMES} from '../script';
-import {C, SERIF} from '../theme';
+import {C, DISPLAY, SCRIPT} from '../theme';
 import {sceneFrames} from '../timing';
 import {Doodles} from './Doodles';
 import {S1Hook} from '../stations/S1Hook';
@@ -36,16 +36,17 @@ const visible = (cam: Cam, id: StationId, extra?: [number, number, number, numbe
 
 // ---------- paper ----------
 
+/** cream cloth with a fine pinstripe that drifts with the camera (parallax) */
 const GridLayer: React.FC<{cam: Cam}> = ({cam}) => {
   const k = 0.7;
   const zs = Math.pow(cam.z, 0.7);
-  const size = 46 * zs;
+  const gap = 34 * zs;
   return (
     <AbsoluteFill
       style={{
-        backgroundImage: `radial-gradient(${C.creamDark} ${Math.max(1.2, 2.6 * zs)}px, transparent ${Math.max(1.4, 2.9 * zs)}px)`,
-        backgroundSize: `${size}px ${size}px`,
-        backgroundPosition: `${960 - cam.x * k * zs}px ${540 - cam.y * k * zs}px`,
+        backgroundImage: `repeating-linear-gradient(90deg, ${C.creamDark} 0px, ${C.creamDark} ${Math.max(1, 1.6 * zs)}px, transparent ${Math.max(1, 1.6 * zs)}px, transparent ${gap}px)`,
+        backgroundPosition: `${960 - cam.x * k * zs}px 0px`,
+        opacity: 0.55,
       }}
     />
   );
@@ -81,17 +82,17 @@ const StationLabels: React.FC<{cam: Cam; f: number}> = ({cam, f}) => {
               opacity: vis,
               display: 'flex',
               alignItems: 'stretch',
-              border: `16px solid ${C.ink}`,
-              borderRadius: 60,
+              border: `8px solid ${C.ink}`,
+              borderRadius: 12,
               overflow: 'hidden',
-              boxShadow: `22px 22px 0 ${C.ink}`,
+              boxShadow: '0 60px 120px rgba(60,45,20,0.22)',
               whiteSpace: 'nowrap',
             }}
           >
-            <div style={{background: scene === 'close' ? C.orange : C.blue, color: C.white, fontFamily: SERIF, fontStyle: 'italic', fontSize: 170, padding: '6px 54px 14px', display: 'flex', alignItems: 'center', lineHeight: 1.1}}>
+            <div style={{background: scene === 'close' ? C.orange : C.blue, color: C.white, fontFamily: SCRIPT, fontStyle: 'italic', fontWeight: 700, fontSize: 170, padding: '6px 54px 14px', display: 'flex', alignItems: 'center', lineHeight: 1.1}}>
               {ROMAN[i]}
             </div>
-            <div style={{background: C.paper, color: C.ink, fontFamily: SERIF, fontSize: 170, padding: '6px 64px 14px', lineHeight: 1.1}}>{CHAPTERS[scene]}</div>
+            <div style={{background: C.paper, color: C.ink, fontFamily: DISPLAY, fontSize: 190, padding: '14px 64px 6px', lineHeight: 1.1, textTransform: 'uppercase'}}>{CHAPTERS[scene]}</div>
           </div>
         );
       })}
@@ -169,9 +170,9 @@ export const ChapterHeader: React.FC<{opacity?: number}> = ({opacity = 1}) => {
         {rows.map((r, i) =>
           r.t ? (
             <div key={i} style={{position: 'absolute', left: 0, top: r.y, height: 52, display: 'flex', alignItems: 'baseline', gap: 16, opacity: r.o, whiteSpace: 'nowrap'}}>
-              <span style={{fontFamily: SERIF, fontStyle: 'italic', fontSize: 40, color: C.blue, minWidth: 44}}>{r.n}</span>
+              <span style={{fontFamily: SCRIPT, fontStyle: 'italic', fontWeight: 700, fontSize: 38, color: C.blue, minWidth: 44}}>{r.n}</span>
               <span style={{width: 2, height: 30, background: C.ink, opacity: 0.35, alignSelf: 'center'}} />
-              <span style={{fontFamily: SERIF, fontSize: 40, color: C.ink, letterSpacing: '0.005em'}}>{r.t}</span>
+              <span style={{fontFamily: DISPLAY, fontSize: 36, color: C.ink, letterSpacing: '0.04em', textTransform: 'uppercase'}}>{r.t}</span>
             </div>
           ) : null,
         )}

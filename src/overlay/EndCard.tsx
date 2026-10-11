@@ -1,10 +1,10 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import type {TransitionPresentation, TransitionPresentationComponentProps} from '@remotion/transitions';
-import {sp} from '../anim';
+import {ramp, sp} from '../anim';
 import {Lucky} from '../components/Lucky';
-import {Card, Coin3D, Head, Pill, Pop, stickerCut} from '../components/ui';
-import {C, MONO, SERIF} from '../theme';
+import {Card, Coin3D, Display, Label, Pill, Pop, Rise, Script, stickerCut} from '../components/ui';
+import {C, DISPLAY, HAIR, LIFT, MONO, SANS, SCRIPT} from '../theme';
 
 // End card + a custom @remotion/transitions presentation: the camera dives into
 // the frozen coin and its face opens onto the end card.
@@ -39,35 +39,45 @@ export const coinZoom = (props: CoinZoomProps): TransitionPresentation<CoinZoomP
 
 export const EndCard: React.FC<{belowAt: number}> = ({belowAt}) => {
   const f = useCurrentFrame();
+  const slam = sp(f, 8, {damping: 12, stiffness: 230, mass: 0.7});
   return (
-    <AbsoluteFill style={{background: C.cream, backgroundImage: `radial-gradient(${C.creamDark} 2.6px, transparent 2.9px)`, backgroundSize: '46px 46px', backgroundPosition: `${f * 0.4}px ${f * 0.25}px`}}>
-      <Pop at={4} x={830} y={360} from="down" f={f} dist={300}>
-        <Card style={{width: 1300, padding: '40px 56px 44px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18}}>
-          <div style={{display: 'flex', gap: 16}}>
-            <Pill bg={C.ink} color={C.white} size={30}>
-              FULL ARTICLE
-            </Pill>
-            <Pill bg={C.gold} size={30} mono>
-              17 min read
-            </Pill>
-          </div>
-          <div style={{fontFamily: SERIF, fontSize: 104, lineHeight: 1, textAlign: 'center', color: C.ink}}>
-            The Best Crypto Trading AI Might Just Be the <span style={{fontStyle: 'italic', color: C.orange}}>Luckiest</span>
-          </div>
-        </Card>
-      </Pop>
-      <Pop at={12} x={830} y={650} rot={-1.5} f={f}>
-        <Pill bg={C.blue} color={C.white} size={42}>
-          Andrea Gervasoni · TKS Focus: Blockchain
-        </Pill>
-      </Pop>
-      <Pop at={Math.max(16, belowAt - 4)} x={830} y={790} f={f}>
-        <div style={{display: 'flex', alignItems: 'center', gap: 20, transform: `translateY(${Math.abs(Math.sin(f / 5)) * -12}px)`}}>
+    <AbsoluteFill style={{background: C.cream}}>
+      <AbsoluteFill style={{backgroundImage: `repeating-linear-gradient(90deg, ${C.creamDark} 0px, ${C.creamDark} 1.6px, transparent 1.6px, transparent 34px)`, backgroundPosition: `${f * 0.3}px 0px`, opacity: 0.55}} />
+      {/* the title, as the same collage as the opening */}
+      <div style={{position: 'absolute', left: 170, top: 210, display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+        <Rise at={2} f={f}>
+          <Label size={22} color={C.blue}>
+            The full article · 17 min read
+          </Label>
+        </Rise>
+        <div style={{marginTop: 26}}>
+          <Rise at={4} f={f}>
+            <Script size={76}>The best crypto trading AI</Script>
+          </Rise>
+        </div>
+        <Rise at={6} f={f}>
+          <Script size={76}>might just be the</Script>
+        </Rise>
+        <div style={{transform: `scale(${2 - slam})`, transformOrigin: '0% 70%', opacity: f >= 8 ? 1 : 0, marginTop: 4}}>
+          <Display size={300} color={C.orange}>
+            Luckiest
+          </Display>
+        </div>
+        <div style={{display: 'flex', alignItems: 'center', gap: 24, marginTop: 34, opacity: ramp(f, 12, 22)}}>
+          <Label size={24}>Andrea Gervasoni</Label>
+          <div style={{width: 50, height: HAIR, background: C.ink}} />
+          <Label size={24} color="#6E6757">
+            TKS Focus · Blockchain
+          </Label>
+        </div>
+      </div>
+      <Pop at={Math.max(16, belowAt - 4)} x={1290} y={880} f={f}>
+        <div style={{display: 'flex', alignItems: 'center', gap: 20, transform: `translateY(${Math.abs(Math.sin(f / 5)) * -10}px)`}}>
           <Pill bg={C.orange} color={C.white} size={52}>
-            <span>Link below</span>
+            Link below
           </Pill>
-          <svg width={74} height={92} viewBox="0 0 74 92" style={{overflow: 'visible'}}>
-            <path d="M37 6 L37 76 M10 52 L37 82 L64 52" stroke={C.ink} strokeWidth={14} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width={60} height={80} viewBox="0 0 74 92" style={{overflow: 'visible'}}>
+            <path d="M37 6 L37 76 M14 54 L37 82 L60 54" stroke={C.ink} strokeWidth={7} fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </Pop>
@@ -80,7 +90,11 @@ export const EndCard: React.FC<{belowAt: number}> = ({belowAt}) => {
       <div style={{position: 'absolute', left: 1610 - 46, top: 210 - 46 + Math.sin(f / 10) * 8}}>
         <Coin3D r={46} rx={18} ry={f * 1.6} />
       </div>
-      <div style={{position: 'absolute', left: 1500, top: 120, fontFamily: MONO, fontWeight: 800, fontSize: 26, color: C.grey, transform: `scale(${sp(f, 20)})`}}>still in the air…</div>
+      <div style={{position: 'absolute', left: 1490, top: 100, transform: `scale(${sp(f, 20)})`}}>
+        <Script size={36} color="#6E6757" weight={500}>
+          still in the air…
+        </Script>
+      </div>
     </AbsoluteFill>
   );
 };

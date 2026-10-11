@@ -38,9 +38,9 @@ const melt = flubber(BODY, PUDDLE, {maxSegmentLength: 6});
 
 const Arm: React.FC<{d: string; hand: [number, number]; tint: string}> = ({d, hand, tint}) => (
   <g>
-    <path d={d} stroke={C.ink} strokeWidth={21} fill="none" strokeLinecap="round" />
-    <path d={d} stroke={tint} strokeWidth={10} fill="none" strokeLinecap="round" />
-    <circle cx={hand[0]} cy={hand[1]} r={12} fill={C.white} stroke={C.ink} strokeWidth={5} />
+    <path d={d} stroke={C.ink} strokeWidth={15} fill="none" strokeLinecap="round" />
+    <path d={d} stroke={tint} strokeWidth={9} fill="none" strokeLinecap="round" />
+    <circle cx={hand[0]} cy={hand[1]} r={11} fill={C.white} stroke={C.ink} strokeWidth={3} />
   </g>
 );
 
@@ -65,7 +65,7 @@ const Eye: React.FC<{cx: number; cy: number; look: [number, number]; r?: number;
   lid = 0,
 }) => (
   <g transform={`translate(${cx} ${cy}) scale(1 ${blink}) translate(${-cx} ${-cy})`}>
-    <circle cx={cx} cy={cy} r={r} fill={C.white} stroke={C.ink} strokeWidth={4} />
+    <circle cx={cx} cy={cy} r={r} fill={C.white} stroke={C.ink} strokeWidth={3} />
     <circle cx={cx + look[0] * 5} cy={cy + look[1] * 5} r={pupil} fill={C.ink} />
     <circle cx={cx + look[0] * 5 - 3} cy={cy + look[1] * 5 - 3} r={2.8} fill={C.white} />
     {lid > 0 && (
@@ -81,10 +81,9 @@ const Eye: React.FC<{cx: number; cy: number; look: [number, number]; r?: number;
 
 const CrownShape: React.FC = () => (
   <g>
-    <path d="M64 46 L58 6 L82 26 L100 -8 L118 26 L142 6 L136 46 Z" fill={C.gold} stroke={C.ink} strokeWidth={5} strokeLinejoin="round" />
-    <circle cx={100} cy={32} r={6} fill={C.blue} stroke={C.ink} strokeWidth={3} />
-    <circle cx={80} cy={37} r={4} fill={C.orange} stroke={C.ink} strokeWidth={2.5} />
-    <circle cx={120} cy={37} r={4} fill={C.orange} stroke={C.ink} strokeWidth={2.5} />
+    <path d="M64 46 L58 6 L82 26 L100 -8 L118 26 L142 6 L136 46 Z" fill={C.gold} stroke={C.ink} strokeWidth={3} strokeLinejoin="round" />
+    <path d="M62 40 L138 40" stroke={C.goldDark} strokeWidth={3} />
+    <circle cx={100} cy={-8} r={4.5} fill={C.blue} stroke={C.ink} strokeWidth={2} />
   </g>
 );
 
@@ -125,8 +124,8 @@ export const Lucky: React.FC<Props> = ({
   ant = ant * (1 - deflate) + deflate * 70;
 
   const mouth: Record<Expr, React.ReactNode> = {
-    happy: <path d="M88 134 Q100 147 112 134" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
-    confident: <path d="M86 136 Q102 146 116 130" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
+    happy: <path d="M88 134 Q100 147 112 134" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />,
+    confident: <path d="M86 136 Q102 146 116 130" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />,
     laugh: (
       <g>
         <path d="M84 130 Q100 156 116 130 Z" fill={C.ink} stroke={C.ink} strokeWidth={4} strokeLinejoin="round" />
@@ -141,11 +140,11 @@ export const Lucky: React.FC<Props> = ({
     ),
     nervous: <path d="M82 140 q4.5 -6 9 0 t9 0 t9 0 t9 0" stroke={C.ink} strokeWidth={4.5} fill="none" strokeLinecap="round" />,
     shocked: <ellipse cx={100} cy={141} rx={9} ry={11} fill={C.ink} />,
-    deflated: <path d="M86 144 Q100 132 114 144" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
-    calm: <path d="M91 136 Q100 143 109 136" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
-    detective: <path d="M88 139 Q103 145 114 133" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
-    squint: <path d="M88 140 L112 138" stroke={C.ink} strokeWidth={5} strokeLinecap="round" />,
-    shrug: <path d="M86 140 Q93 134 100 140 Q107 146 114 140" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
+    deflated: <path d="M86 144 Q100 132 114 144" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />,
+    calm: <path d="M91 136 Q100 143 109 136" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />,
+    detective: <path d="M88 139 Q103 145 114 133" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />,
+    squint: <path d="M88 140 L112 138" stroke={C.ink} strokeWidth={4} strokeLinecap="round" />,
+    shrug: <path d="M86 140 Q93 134 100 140 Q107 146 114 140" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />,
   };
 
   const eyes = (() => {
@@ -153,21 +152,21 @@ export const Lucky: React.FC<Props> = ({
       case 'proud':
       case 'laugh':
         return (
-          <g stroke={C.ink} strokeWidth={6} fill="none" strokeLinecap="round">
+          <g stroke={C.ink} strokeWidth={4.5} fill="none" strokeLinecap="round">
             <path d="M62 116 Q76 98 90 116" />
             <path d="M110 116 Q124 98 138 116" />
           </g>
         );
       case 'calm':
         return (
-          <g stroke={C.ink} strokeWidth={6} fill="none" strokeLinecap="round">
+          <g stroke={C.ink} strokeWidth={4.5} fill="none" strokeLinecap="round">
             <path d="M63 110 Q76 121 89 110" />
             <path d="M111 110 Q124 121 137 110" />
           </g>
         );
       case 'deflated':
         return (
-          <g stroke={C.ink} strokeWidth={6} fill="none" strokeLinecap="round">
+          <g stroke={C.ink} strokeWidth={4.5} fill="none" strokeLinecap="round">
             <path d="M62 108 Q76 120 90 108" />
             <path d="M110 108 Q124 120 138 108" />
             <path d="M60 96 L88 102" strokeWidth={4.5} />
@@ -179,7 +178,7 @@ export const Lucky: React.FC<Props> = ({
           <g>
             <Eye cx={76} cy={113} look={look} blink={blink} lid={0.45} />
             <Eye cx={124} cy={113} look={look} blink={blink} lid={0.45} />
-            <path d="M110 88 Q124 80 140 88" stroke={C.ink} strokeWidth={5} fill="none" strokeLinecap="round" />
+            <path d="M110 88 Q124 80 140 88" stroke={C.ink} strokeWidth={4} fill="none" strokeLinecap="round" />
           </g>
         );
       case 'squint':
@@ -187,15 +186,15 @@ export const Lucky: React.FC<Props> = ({
           <g>
             <Eye cx={76} cy={113} look={look} blink={1} lid={0.62} r={15} />
             <Eye cx={124} cy={113} look={look} blink={1} lid={0.62} r={15} />
-            <path d="M60 92 L90 98" stroke={C.ink} strokeWidth={5} strokeLinecap="round" />
-            <path d="M140 92 L110 98" stroke={C.ink} strokeWidth={5} strokeLinecap="round" />
+            <path d="M60 92 L90 98" stroke={C.ink} strokeWidth={4} strokeLinecap="round" />
+            <path d="M140 92 L110 98" stroke={C.ink} strokeWidth={4} strokeLinecap="round" />
           </g>
         );
       case 'detective':
         return (
           <g>
-            <path d="M62 113 L90 109" stroke={C.ink} strokeWidth={6} strokeLinecap="round" />
-            <path d="M60 98 L90 102" stroke={C.ink} strokeWidth={5} strokeLinecap="round" />
+            <path d="M62 113 L90 109" stroke={C.ink} strokeWidth={4.5} strokeLinecap="round" />
+            <path d="M60 98 L90 102" stroke={C.ink} strokeWidth={4} strokeLinecap="round" />
             <Eye cx={124} cy={112} look={look} r={18} blink={blink} />
           </g>
         );
@@ -240,8 +239,8 @@ export const Lucky: React.FC<Props> = ({
           <ellipse cx={126} cy={198} rx={20} ry={11} />
         </g>
         <g transform={`translate(0 ${d * 120}) rotate(${ant} 138 52)`}>
-          <path d="M138 52 L152 14" stroke={C.ink} strokeWidth={6} strokeLinecap="round" />
-          <circle cx={154} cy={10} r={11} fill={C.orange} stroke={C.ink} strokeWidth={5} />
+          <path d="M138 52 L152 14" stroke={C.ink} strokeWidth={4} strokeLinecap="round" />
+          <circle cx={154} cy={10} r={10} fill={C.orange} stroke={C.ink} strokeWidth={3} />
         </g>
         <g opacity={1 - d} transform={`translate(0 ${shrugLift + d * 40})`}>
           <Arm d={armSet.l[0]} hand={armSet.l[1]} tint={tint} />
@@ -249,10 +248,10 @@ export const Lucky: React.FC<Props> = ({
             <Arm d={armSet.r[0]} hand={armSet.r[1]} tint={tint} />
           </g>
         </g>
-        <path d={bodyPath} fill={tint} stroke={C.ink} strokeWidth={6} strokeLinejoin="round" />
+        <path d={bodyPath} fill={tint} stroke={C.ink} strokeWidth={3.5} strokeLinejoin="round" />
         <g transform={faceTf}>
           <path d="M48 86 Q58 60 84 50" stroke={C.white} strokeWidth={7} fill="none" strokeLinecap="round" opacity={0.45 * (1 - d)} />
-          <rect x={44} y={76} width={112} height={78} rx={30} fill={C.paper} stroke={C.ink} strokeWidth={5} />
+          <rect x={44} y={76} width={112} height={78} rx={30} fill={C.paper} stroke={C.ink} strokeWidth={3} />
           <g fill={C.orange} opacity={0.5}>
             <ellipse cx={58} cy={136} rx={8} ry={4.5} />
             <ellipse cx={142} cy={136} rx={8} ry={4.5} />
@@ -261,22 +260,23 @@ export const Lucky: React.FC<Props> = ({
           {mouth[expr]}
           {sunglasses > 0 && (
             <g transform={`translate(0 ${(1 - sunglasses) * -90})`} opacity={Math.min(1, sunglasses * 3)}>
-              <path d="M52 104 L148 104" stroke={C.ink} strokeWidth={6} />
+              <path d="M52 104 L148 104" stroke={C.ink} strokeWidth={4.5} />
               <path d="M56 100 L94 100 L90 124 Q74 132 60 122 Z" fill={C.ink} stroke={C.ink} strokeWidth={4} strokeLinejoin="round" />
               <path d="M106 100 L144 100 L140 122 Q126 132 110 124 Z" fill={C.ink} stroke={C.ink} strokeWidth={4} strokeLinejoin="round" />
               <path d="M64 106 L74 106" stroke={C.white} strokeWidth={4} strokeLinecap="round" />
               <path d="M114 106 L124 106" stroke={C.white} strokeWidth={4} strokeLinecap="round" />
             </g>
           )}
-          <g stroke={C.ink} strokeWidth={3} opacity={1 - d}>
-            <circle cx={86} cy={172} r={5} fill={C.gold} />
-            <circle cx={100} cy={172} r={5} fill={C.orange} />
-            <circle cx={114} cy={172} r={5} fill={C.white} />
+          {/* a bow tie: Lucky dresses for the occasion */}
+          <g opacity={1 - d} stroke={C.ink} strokeWidth={2.5} strokeLinejoin="round">
+            <path d="M100 174 L80 162 Q76 174 80 186 Z" fill={C.ink} />
+            <path d="M100 174 L120 162 Q124 174 120 186 Z" fill={C.ink} />
+            <rect x={94} y={168} width={12} height={12} rx={3} fill={C.blue} />
           </g>
         </g>
         {expr === 'nervous' && <path d={`M166 ${70 + ((t * 0.8) % 22)} q-9 14 0 18 q9 -4 0 -18 Z`} fill="#9FD8FF" stroke={C.ink} strokeWidth={3} />}
         {hat && (
-          <g stroke={C.ink} strokeWidth={5} strokeLinejoin="round">
+          <g stroke={C.ink} strokeWidth={3} strokeLinejoin="round">
             <path d="M46 62 Q100 -8 154 62 Z" fill="#C98E4E" />
             <path d="M68 40 Q100 22 132 40" fill="none" strokeWidth={3} />
             <path d="M28 62 Q100 46 172 62 Q100 80 28 62 Z" fill="#9C6430" />
@@ -285,9 +285,9 @@ export const Lucky: React.FC<Props> = ({
         {magnifier && (
           <g>
             <path d="M184 168 L204 138" stroke={C.ink} strokeWidth={13} strokeLinecap="round" />
-            <path d="M184 168 L204 138" stroke="#9C6430" strokeWidth={5} strokeLinecap="round" />
+            <path d="M184 168 L204 138" stroke="#9C6430" strokeWidth={4} strokeLinecap="round" />
             <circle cx={218} cy={112} r={30} fill="rgba(201,208,255,0.55)" stroke={C.ink} strokeWidth={7} />
-            <path d="M200 102 Q206 90 218 88" stroke={C.white} strokeWidth={5} fill="none" strokeLinecap="round" />
+            <path d="M200 102 Q206 90 218 88" stroke={C.white} strokeWidth={4} fill="none" strokeLinecap="round" />
           </g>
         )}
         {crown > 0 && (
