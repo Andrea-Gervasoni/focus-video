@@ -71,7 +71,7 @@ export const EndCard: React.FC<{belowAt: number}> = ({belowAt}) => {
           </Label>
         </div>
       </div>
-      <Pop at={Math.max(16, belowAt - 4)} x={1290} y={880} f={f}>
+      <Pop at={Math.max(16, belowAt - 4)} x={1300} y={820} f={f}>
         <div style={{display: 'flex', alignItems: 'center', gap: 20, transform: `translateY(${Math.abs(Math.sin(f / 5)) * -10}px)`}}>
           <Pill bg={C.orange} color={C.white} size={52}>
             Link below

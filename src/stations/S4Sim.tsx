@@ -253,7 +253,7 @@ export const S4Sim: React.FC = () => {
   return (
     <AbsoluteFill>
       {/* ---- the experiment ---- */}
-      <Pop at={tested - 10} x={560} y={96} from="up" out={expOut} outTo="up" f={f}>
+      <Pop at={tested - 10} x={560} y={160} from="up" out={expOut} outTo="up" f={f}>
         <div style={{display: 'flex', alignItems: 'baseline', gap: 22}}>
           <Script size={90}>So I</Script>
           <Display size={150} color={C.blue}>
@@ -261,7 +261,7 @@ export const S4Sim: React.FC = () => {
           </Display>
         </div>
       </Pop>
-      <Pop at={tested - 8} x={560} y={340} from="down" out={expOut} outTo="up" rot={-1.5} f={f}>
+      <Pop at={tested - 8} x={560} y={400} from="down" out={expOut} outTo="up" rot={-1.5} f={f}>
         <Card bg={C.ink} style={{width: 900, padding: 0, overflow: 'hidden'}}>
           <div style={{display: 'flex', alignItems: 'center', gap: 12, padding: '14px 22px', borderBottom: `1px solid #2C2C2C`}}>
             {[C.orange, C.gold, C.blue].map((c) => (
@@ -319,7 +319,7 @@ export const S4Sim: React.FC = () => {
       {f >= chartIn + 4 && (
         <>
           <div style={{position: 'absolute', left: PX0, top: ZERO_Y, width: PX2 - PX0, height: 3, background: C.greyLight}} />
-          <div style={{position: 'absolute', left: PX0 - 14, top: 150, display: 'flex', flexDirection: 'column', gap: 2, opacity: shown > 0 ? (1 - ramp(f, v23 - 12, v23)) + ramp(f, collapse + 24, collapse + 36) : 0}}>
+          <div style={{position: 'absolute', left: PX0 - 14, top: 150, display: 'flex', flexDirection: 'column', gap: 2, opacity: shown > 0 ? (1 - ramp(f, b1000 + 4, b1000 + 14)) + ramp(f, collapse + 24, collapse + 36) : 0}}>
             <div style={{display: 'flex', alignItems: 'baseline', gap: 14}}>
               <Display size={64} color={C.blue}>
                 {shown.toLocaleString('en-US')}
@@ -428,7 +428,7 @@ export const S4Sim: React.FC = () => {
       )}
       {frozen && <div style={{position: 'absolute', inset: -400, background: 'rgba(30,30,40,0.08)'}} />}
       {f >= neverSeen && deflate <= 0 && (
-        <Pop at={neverSeen} x={1590} y={100} rot={-4} f={f}>
+        <Pop at={neverSeen} x={1470} y={110} rot={-4} f={f}>
           <div style={{background: C.paper, border: `2px dashed ${C.goldDark}`, borderRadius: 2, padding: '4px 16px 6px'}}>
             <Script size={38} color={C.goldDark}>
               if it were skill

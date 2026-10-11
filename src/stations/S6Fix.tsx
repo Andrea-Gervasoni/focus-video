@@ -232,8 +232,8 @@ export const S6Fix: React.FC = () => {
         </div>
       </Pop>
       {f >= p34 && (
-        <Pop at={p34 + 4} x={1610} y={790} rot={-4} f={f}>
-          <Pill bg={C.orange} color={C.white} size={36}>
+        <Pop at={p34 + 4} x={1650} y={845} rot={-3} f={f}>
+          <Pill bg={C.orange} color={C.white} size={30}>
             same backtest, 1,000 tries
           </Pill>
         </Pop>
