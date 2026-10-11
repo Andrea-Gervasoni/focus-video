@@ -11,34 +11,88 @@ import {allWords, CaptionWord} from '../timing';
 type Group = {words: CaptionWord[]; start: number; end: number};
 
 const isNumber = (t: string) => /\d/.test(t);
+const WEAK = new Set(['a', 'an', 'the', 'of', 'to', 'in', 'on', 'at', 'for', 'with', 'and', 'or', 'about', 'my', 'is', 'are']);
 
-const buildGroups = (maxWords: number, maxChars: number): Group[] => {
+export const buildGroups = (maxWords: number, maxChars: number): Group[] => {
   const words = allWords();
-  const raw: CaptionWord[][] = [];
-  let cur: CaptionWord[] = [];
-  const len = (ws: CaptionWord[]) => ws.reduce((a, w) => a + w.text.length * (isNumber(w.text) ? 1.4 : 1) + 1, 0);
-  const flush = () => {
-    if (cur.length) raw.push(cur);
-    cur = [];
-  };
-  for (const w of words) {
-    if (cur.length && w.scene !== cur[0].scene) flush();
-    if (cur.length && (cur.length >= maxWords || len(cur) + w.text.length > maxChars)) {
-      let cut = -1;
-      cur.forEach((c, i) => {
-        if (i < cur.length - 1 && /[,:;]$/.test(c.text)) cut = i;
-      });
-      if (cut >= 0) {
-        const rest = cur.slice(cut + 1);
-        cur = cur.slice(0, cut + 1);
-        flush();
-        cur = rest;
-      } else flush();
+  const weight = (w: CaptionWord) => w.text.length * (isNumber(w.text) ? 1.4 : 1) + 1;
+  const len = (ws: CaptionWord[]) => ws.reduce((a, w) => a + weight(w), 0);
+  const fits = (ws: CaptionWord[]) => ws.length <= maxWords && len(ws) <= maxChars;
+
+  // split a run of words into the fewest parts that fit, with balanced lengths (no orphans)
+  const balance = (ws: CaptionWord[]): CaptionWord[][] => {
+    for (let k = 2; k <= ws.length; k++) {
+      const target = len(ws) / k;
+      const parts: CaptionWord[][] = [];
+      let cur: CaptionWord[] = [];
+      let acc = 0;
+      for (const w of ws) {
+        const next = acc + weight(w);
+        const cutBefore = cur.length > 0 && parts.length < k - 1 && Math.abs(acc - target * (parts.length + 1)) < Math.abs(next - target * (parts.length + 1));
+        if (cutBefore) {
+          parts.push(cur);
+          cur = [];
+        }
+        cur.push(w);
+        acc = next;
+      }
+      parts.push(cur);
+      // never end a line on a weak word ("more than 14,000 of" -> "of the roughly...")
+      for (let i = 0; i < parts.length - 1; i++) {
+        const last = parts[i][parts[i].length - 1];
+        if (parts[i].length > 1 && WEAK.has(last.text.toLowerCase()) && fits([last, ...parts[i + 1]])) {
+          parts[i + 1] = [parts[i].pop() as CaptionWord, ...parts[i + 1]];
+        }
+      }
+      if (parts.every(fits)) return parts;
     }
-    cur.push(w);
-    if (/[.?!]["”’]?$/.test(w.text)) flush();
+    return ws.map((w) => [w]);
+  };
+
+  // sentences -> clauses (cut after , : ;) -> groups
+  const sentences: CaptionWord[][] = [];
+  let sent: CaptionWord[] = [];
+  for (const w of words) {
+    if (sent.length && w.scene !== sent[0].scene) {
+      sentences.push(sent);
+      sent = [];
+    }
+    sent.push(w);
+    if (/[.?!]["”’]?$/.test(w.text)) {
+      sentences.push(sent);
+      sent = [];
+    }
   }
-  flush();
+  if (sent.length) sentences.push(sent);
+
+  const raw: CaptionWord[][] = [];
+  for (const sentence of sentences) {
+    const clauses: CaptionWord[][] = [];
+    let cl: CaptionWord[] = [];
+    sentence.forEach((w, i) => {
+      cl.push(w);
+      if (i < sentence.length - 1 && /[,:;]$/.test(w.text)) {
+        clauses.push(cl);
+        cl = [];
+      }
+    });
+    if (cl.length) clauses.push(cl);
+    let cur: CaptionWord[] = [];
+    for (const c of clauses) {
+      if (fits([...cur, ...c])) {
+        cur = [...cur, ...c];
+        continue;
+      }
+      if (cur.length) raw.push(cur);
+      if (fits(c)) cur = c;
+      else {
+        const parts = balance(c);
+        parts.slice(0, -1).forEach((p) => raw.push(p));
+        cur = parts[parts.length - 1];
+      }
+    }
+    if (cur.length) raw.push(cur);
+  }
   return raw.map((ws, i) => {
     const next = raw[i + 1];
     const last = ws[ws.length - 1];
